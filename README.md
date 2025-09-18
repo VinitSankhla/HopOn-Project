@@ -48,9 +48,6 @@ HopOn/
 │   ├── dashboard.html    # User dashboard
 │   ├── booking.html      # Ride booking
 │   └── history.html      # Ride history
-├── assets/
-│   └── images/
-│       └── logo.png      # HopOn logo
 └── README.md
 ```
 
@@ -58,17 +55,6 @@ HopOn/
 - **Gen Z Appeal**: Modern, colorful, and intuitive interface
 - **Mobile First**: Optimized for smartphone usage
 - **Quick Access**: Minimal clicks to book a ride
-
-### 🚧 Development Status
-Currently in **Phase 1** - Building core authentication and basic structure.
-
-### 🔮 Future Features
-- Electric bike integration
-- Group booking for friends
-- Maintenance request system
-- Event-based bike allocation
-- Day scholar access
-- Reward/scoring system
 
 ### 🛠️ Setup & Installation
 1. Clone or download the project
