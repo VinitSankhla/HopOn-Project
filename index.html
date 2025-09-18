@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HopOn - Campus Bike Sharing</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚴‍♂️</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <!-- Google Fonts for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bike-icon"><i class="fas fa-bicycle"></i></div>
+        <div class="bike-icon"><i class="fas fa-bicycle"></i></div>
+        <div class="bike-icon"><i class="fas fa-bicycle"></i></div>
+    </div>
+
+    <div class="container">
+        <!-- Header with Logo -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-bicycle logo-icon"></i>
+                    <span class="logo-text">HopOn</span>
+                </div>
+                <p class="tagline">Your Campus Ride, Simplified 🚴‍♂️</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1 class="welcome-title">Ready to <span class="highlight">HopOn</span>?</h1>
+                <p class="welcome-subtitle">Quick, easy campus rides at your fingertips</p>
+            </div>
+
+            <!-- Auth Container -->
+            <div class="auth-container">
+                <!-- Login Form -->
+                <div id="loginForm" class="form-container active">
+                    <h2 class="form-title">Welcome Back!</h2>
+                    <form class="auth-form" id="login-form">
+                        <div class="input-group">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="loginId" placeholder="Enter your Login ID" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="loginPassword" placeholder="Enter your Password" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword')"></i>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login
+                        </button>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>New to HopOn? <a href="#" onclick="showRegister()" class="link">Create Account</a></p>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="form-container">
+                    <h2 class="form-title">Join HopOn!</h2>
+                    <form class="auth-form" id="register-form">
+                        <div class="input-group">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="registerName" placeholder="Full Name" required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-id-card input-icon"></i>
+                            <input type="text" id="registerLoginId" placeholder="Create Login ID" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="registerEmail" placeholder="Email Address" required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="tel" id="registerPhone" placeholder="Phone Number" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="registerPassword" placeholder="Create Password" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('registerPassword')"></i>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword')"></i>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Already have an account? <a href="#" onclick="showLogin()" class="link">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Features Preview -->
+        <section class="features-preview">
+            <div class="feature-item">
+                <i class="fas fa-clock feature-icon"></i>
+                <span>Quick 15-min rides</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-map-marker-alt feature-icon"></i>
+                <span>Campus-wide access</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-mobile-alt feature-icon"></i>
+                <span>Real-time tracking</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 HopOn. Making campus mobility effortless.</p>
+        </footer>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="message-container" class="message-container"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner">
+            <i class="fas fa-bicycle spinning"></i>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

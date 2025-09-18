@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HopOn Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚴‍♂️</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .user-rides {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .welcome-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .welcome-subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .card-body {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .location-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .location-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .bike-count {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .stat-icon.primary { background: #667eea; }
+        .stat-icon.success { background: #28a745; }
+        .stat-icon.warning { background: #ffc107; color: #333; }
+        .stat-icon.info { background: #17a2b8; }
+        
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .action-btn:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .action-icon {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #667eea;
+        }
+        
+        .action-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .active-ride {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: none;
+        }
+        
+        .ride-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .ride-timer {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .no-rides {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .location-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                🚴‍♂️ HopOn
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-avatar">U</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-rides">🚴‍♂️ <span id="totalRides">0</span> rides</div>
+                    </div>
+                </div>
+                <button class="btn btn-outline" onclick="viewHistory()">📊 History</button>
+                <button class="btn btn-secondary" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Section -->
+        <div class="welcome-card">
+            <div class="welcome-title" id="welcomeMessage">Welcome to HopOn!</div>
+            <div class="welcome-subtitle">Ready for your next campus adventure?</div>
+        </div>
+
+        <!-- Active Ride (Hidden by default) -->
+        <div id="activeRide" class="active-ride">
+            <div class="ride-header">
+                <h3>🚴‍♂️ Current Ride</h3>
+                <div class="ride-timer" id="rideTimer">15:00</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div>Bike: <span id="activeBikeId">BIKE001</span></div>
+                    <div>Route: <span id="activeRoute">AB1 → AB2</span></div>
+                </div>
+                <button class="btn btn-primary" onclick="endRide()">🛑 End Ride</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Start Ride Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon">🚴‍♂️</div>
+                        Start New Ride
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Book a bike and start your journey across campus</p>
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                            <span style="color: #667eea;">🚴‍♂️</span>
+                            <span>25 Bikes Available</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #667eea;">⏰</span>
+                            <span>15 min default timer</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; padding: 12px;" id="startRideBtn" onclick="startRide()">
+                        🚴‍♂️ Start Ride
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Rides Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon">📊</div>
+                        Recent Rides
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="recentRides">
+                        <div class="no-rides">
+                            <div style="font-size: 40px; margin-bottom: 10px;">🚴</div>
+                            <p>No rides yet. Start your first HopOn adventure!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campus Locations Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon">📍</div>
+                        Campus Locations
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="location-grid">
+                        <div class="location-item">
+                            <div class="location-name">🏢 AB1</div>
+                            <div class="bike-count" id="ab1-bikes">25 bikes</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="location-name">🏢 AB2</div>
+                            <div class="bike-count" id="ab2-bikes">0 bikes</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="location-name">🏠 Boys Hostel</div>
+                            <div class="bike-count" id="boys-hostel-bikes">0 bikes</div>
+                        </div>
+                        <div class="location-item">
+                            <div class="location-name">🏠 Girls Hostel</div>
+                            <div class="bike-count" id="girls-hostel-bikes">0 bikes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon">⚡</div>
+                        Quick Actions
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="action-buttons">
+                        <div class="action-btn" onclick="startRide()">
+                            <div class="action-icon">🚴‍♂️</div>
+                            <div class="action-text">Book Ride</div>
+                        </div>
+                        <div class="action-btn" onclick="viewHistory()">
+                            <div class="action-icon">📊</div>
+                            <div class="action-text">View History</div>
+                        </div>
+                        <div class="action-btn" onclick="refreshData()">
+                            <div class="action-icon">🔄</div>
+                            <div class="action-text">Refresh</div>
+                        </div>
+                        <div class="action-btn" onclick="showHelp()">
+                            <div class="action-icon">❓</div>
+                            <div class="action-text">Help</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon success">🚴‍♂️</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="totalRidesDisplay">0</div>
+                    <div class="stat-label">Total Rides</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon primary">⏰</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="totalTimeDisplay">0h</div>
+                    <div class="stat-label">Total Time</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon warning">📍</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="favLocationDisplay">AB1</div>
+                    <div class="stat-label">Favorite Location</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon info">📅</div>
+                <div class="stat-info">
+                    <div class="stat-number" id="joinDateDisplay">Today</div>
+                    <div class="stat-label">Member Since</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2025 HopOn. Making campus mobility effortless.
+    </div>
+
+    <!-- Inline Storage System (Simplified) -->
+    <script>
+        // Simplified storage system for testing
+        const testStorage = {
+            getCurrentUser: function() {
+                const userData = localStorage.getItem('hopOnCurrentUser');
+                return userData ? JSON.parse(userData) : null;
+            },
+            
+            getAvailableBikes: function(location) {
+                const bikes = JSON.parse(localStorage.getItem('hopOnBikes') || '{}');
+                return Object.values(bikes).filter(bike => 
+                    bike.location === location && bike.isAvailable
+                );
+            },
+            
+            getUserRides: function(userId) {
+                const rides = JSON.parse(localStorage.getItem('hopOnRides') || '[]');
+                return rides.filter(ride => ride.userId === userId);
+            },
+            
+            getActiveRide: function(userId) {
+                const rides = this.getUserRides(userId);
+                return rides.find(ride => ride.status === 'active');
+            },
+            
+            logout: function() {
+                localStorage.setItem('hopOnCurrentUser', null);
+            }
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Standalone dashboard loading...');
+            
+            const user = testStorage.getCurrentUser();
+            if (!user) {
+                alert('No user logged in. Redirecting to login...');
+                window.location.href = '../index.html';
+                return;
+            }
+            
+            // Update user info
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('totalRides').textContent = user.totalRides || 0;
+            document.getElementById('totalRidesDisplay').textContent = user.totalRides || 0;
+            // Update user avatar with first letter
+            const userAvatar = document.querySelector('.user-avatar');
+            if (userAvatar && user.name) {
+                userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                console.log('Updated user avatar to:', user.name.charAt(0).toUpperCase());
+            }
+            // Update total rides from actual ride history
+            const allRides = JSON.parse(localStorage.getItem('hopOnRides') || '[]');
+            const userRides = allRides.filter(ride => ride.userId === user.id);
+            const completedRides = userRides.filter(ride => ride.status === 'completed');
+
+            console.log('User rides found:', userRides.length);
+            console.log('Completed rides:', completedRides.length);
+
+            // Update rides count
+            document.getElementById('totalRides').textContent = completedRides.length;
+            document.getElementById('totalRidesDisplay').textContent = completedRides.length;
+
+            // Calculate total time from all completed rides
+            let totalMinutes = 0;
+            completedRides.forEach(ride => {
+                // Add the timer duration (what user selected) for each completed ride
+                totalMinutes += ride.timerDuration || 15; // Default to 15 if not set
+            });
+
+            console.log('Total minutes:', totalMinutes);
+
+            // Convert to hours and minutes for display
+            const totalHours = Math.floor(totalMinutes / 60);
+            const remainingMinutes = totalMinutes % 60;
+
+            // Update total time display
+            const totalTimeEl = document.getElementById('totalTimeDisplay');
+            if (totalTimeEl) {
+                if (totalHours > 0) {
+                    totalTimeEl.textContent = `${totalHours}h ${remainingMinutes}m`;
+                } else {
+                    totalTimeEl.textContent = `${remainingMinutes}m`;
+                }
+            }
+
+            console.log('Total time display:', totalHours > 0 ? `${totalHours}h ${remainingMinutes}m` : `${remainingMinutes}m`);
+            // Calculate favorite location (most frequently used start location)
+            const locationCount = {};
+            completedRides.forEach(ride => {
+                const startLocation = ride.startLocation;
+                if (startLocation) {
+                    locationCount[startLocation] = (locationCount[startLocation] || 0) + 1;
+                }
+            });
+
+            console.log('Location usage count:', locationCount);
+
+            // Find the location with highest count
+            let favoriteLocation = 'AB1'; // Default
+            let maxCount = 0;
+
+            for (const location in locationCount) {
+                if (locationCount[location] > maxCount) {
+                    maxCount = locationCount[location];
+                    favoriteLocation = location;
+                }
+            }
+
+            // Update favorite location display
+            const favLocationEl = document.getElementById('favLocationDisplay');
+            if (favLocationEl) {
+                if (maxCount > 0) {
+                    favLocationEl.textContent = favoriteLocation;
+                    console.log('Favorite location:', favoriteLocation, 'with', maxCount, 'rides');
+                } else {
+                    favLocationEl.textContent = 'No rides yet';
+                    console.log('No completed rides found');
+                }
+            }
+            // Update recent rides display
+            displayRecentRides(completedRides);
+            
+            // Update welcome message
+            const firstName = user.name.split(' ')[0];
+            const hour = new Date().getHours();
+            let greeting = 'Good morning';
+            if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+            else if (hour >= 17) greeting = 'Good evening';
+            
+            document.getElementById('welcomeMessage').textContent = `${greeting}, ${firstName}!`;
+            
+            // Update bike counts
+            updateBikeCounts();
+            
+            // Update join date
+            const joinDate = new Date(user.createdAt);
+            const today = new Date();
+            const diffDays = Math.ceil((today - joinDate) / (1000 * 60 * 60 * 24));
+            
+            if (diffDays <= 1) {
+                document.getElementById('joinDateDisplay').textContent = 'Today';
+            } else if (diffDays <= 7) {
+                document.getElementById('joinDateDisplay').textContent = `${diffDays}d ago`;
+            } else {
+                document.getElementById('joinDateDisplay').textContent = joinDate.toLocaleDateString();
+            }
+            // Check for active rides
+            checkActiveRides(user);
+            console.log('Dashboard initialized for:', user.name);
+        });
+        
+        function updateBikeCounts() {
+            const locations = ['AB1', 'AB2', 'BOYS HOSTEL', 'GIRLS HOSTEL'];
+            const elementIds = ['ab1-bikes', 'ab2-bikes', 'boys-hostel-bikes', 'girls-hostel-bikes'];
+            
+            locations.forEach((location, index) => {
+                const availableBikes = testStorage.getAvailableBikes(location);
+                const element = document.getElementById(elementIds[index]);
+                if (element) {
+                    element.textContent = `${availableBikes.length} bikes`;
+                }
+            });
+        }
+        function checkActiveRides(user) {
+            console.log('Checking for active rides...');
+            
+            const activeRide = testStorage.getActiveRide(user.id);
+            const activeRideSection = document.getElementById('activeRide');
+            const startRideBtn = document.getElementById('startRideBtn');
+            
+            if (activeRide) {
+                console.log('Active ride found:', activeRide);
+                
+                // Show active ride section
+                if (activeRideSection) {
+                    activeRideSection.style.display = 'block';
+                }
+                
+                // Hide start ride button
+                if (startRideBtn) {
+                    startRideBtn.style.display = 'none';
+                }
+                
+                // Update active ride info
+                const bikeIdEl = document.getElementById('activeBikeId');
+                const routeEl = document.getElementById('activeRoute');
+                
+                if (bikeIdEl) bikeIdEl.textContent = activeRide.bikeId;
+                if (routeEl) {
+                    routeEl.innerHTML = `${activeRide.startLocation} → ${activeRide.endLocation}`;
+                        }
+
+                // Start timer
+                startTimer(activeRide);
+
+                // Setup end ride button
+                const endRideBtn = document.getElementById('endRideBtn');
+                if (endRideBtn) {
+                    endRideBtn.onclick = function() {
+                        endRideNow(activeRide);
+                    };
+                }
+                
+            } else {
+                console.log('No active rides');
+                
+                // Hide active ride section
+                if (activeRideSection) {
+                    activeRideSection.style.display = 'none';
+                }
+                
+                // Show start ride button
+                if (startRideBtn) {
+                    startRideBtn.style.display = 'block';
+                }
+            }
+        }
+        function endRideNow(activeRide) {
+            console.log('Ending ride:', activeRide.id);
+            
+            if (confirm('Are you sure you want to end your ride?')) {
+                // Use the same auto-end function we already have
+                autoEndRide(activeRide);
+            }
+        }
+        function startTimer(ride) {
+            console.log('Starting timer for ride:', ride.id);
+            
+            const startTime = new Date(ride.startTime);
+            const duration = ride.timerDuration || 15; // Default 15 minutes
+            const endTime = new Date(startTime.getTime() + (duration * 60 * 1000));
+            
+            const timer = setInterval(function() {
+                const now = new Date();
+                const remaining = endTime - now;
+                
+                if (remaining <= 0) {
+                    clearInterval(timer);
+                    console.log('Ride timer expired - auto-ending ride');
+                    
+                    // Auto-end the ride
+                    autoEndRide(ride);
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                
+                const timerEl = document.getElementById('rideTimer');
+                if (timerEl) {
+                    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        function autoEndRide(ride) {
+            console.log('Auto-ending ride:', ride.id);
+            
+            try {
+                // Mark ride as completed
+                let rides = JSON.parse(localStorage.getItem('hopOnRides') || '[]');
+                const rideIndex = rides.findIndex(r => r.id === ride.id);
+                
+                if (rideIndex !== -1) {
+                    rides[rideIndex].status = 'completed';
+                    rides[rideIndex].endTime = new Date().toISOString();
+                    rides[rideIndex].actualDuration = ride.timerDuration;
+                    localStorage.setItem('hopOnRides', JSON.stringify(rides));
+                }
+                
+                // Return bike to destination
+                let bikes = JSON.parse(localStorage.getItem('hopOnBikes') || '{}');
+                if (bikes[ride.bikeId]) {
+                    bikes[ride.bikeId].isAvailable = true;
+                    bikes[ride.bikeId].location = ride.endLocation;
+                    bikes[ride.bikeId].currentUser = null;
+                    bikes[ride.bikeId].bookedAt = null;
+                    bikes[ride.bikeId].totalRides += 1;
+                    localStorage.setItem('hopOnBikes', JSON.stringify(bikes));
+                }
+                
+                console.log('Ride ended successfully');
+                
+                // Refresh the dashboard
+                location.reload();
+                
+            } catch (error) {
+                console.error('Error ending ride:', error);
+            }
+        }
+        
+        function startRide() {
+            window.location.href = 'booking.html';
+        }
+        
+        function viewHistory() {
+        window.location.href = 'history.html';
+        }
+        
+        function refreshData() {
+            window.location.reload();
+        }
+        
+        function showHelp() {
+            alert('❓ Help & Support\n\n📧 Email: vinit.24bsa10084@vitbhopal.ac.in\n📞 Phone: +91-9509893634');
+        }
+        
+        function logout() {
+            testStorage.logout();
+            alert('👋 Logged out successfully!');
+            window.location.href = '../index.html';
+        }
+        
+        function endRide() {
+            console.log('End ride button clicked');
+    
+            // Get the current active ride
+            const user = testStorage.getCurrentUser();
+            const activeRide = testStorage.getActiveRide(user.id);
+            
+            if (activeRide && confirm('Are you sure you want to end your ride?')) {
+                autoEndRide(activeRide);
+            }
+        }
+        function displayRecentRides(completedRides) {
+            const ridesContainer = document.getElementById('recentRides');
+            if (!ridesContainer) return;
+
+            // Get last 2 rides only (most recent first)
+            const sortedRides = completedRides.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+            const recentRides = sortedRides.slice(0, 2);
+    
+            if (recentRides.length === 0) {
+                ridesContainer.innerHTML = `
+                    <div class="no-rides">
+                        <div style="font-size: 40px; margin-bottom: 10px; filter: hue-rotate(20deg);">🚴‍♂️</div>
+                        <p>No rides yet. <span style="color: #667eea; font-weight: 600;">Start your first adventure!</span></p>
+                    </div>
+                `;
+                return;
+            }
+
+            const ridesHTML = recentRides.map((ride, index) => {
+                const startTime = new Date(ride.startTime);
+                const timeAgo = getTimeAgo(startTime);
+                
+                return `
+                    <div class="ride-item completed" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%); border-left: 4px solid #667eea; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 15px;">
+                        <div class="ride-info">
+                            <div class="ride-route" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px;">
+                                <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 8px;">🚴‍♂️ ${ride.bikeId}</span>
+                                <span style="color: #667eea; font-weight: 600;">${ride.startLocation}</span>
+                                <i class="fas fa-arrow-right" style="color: #667eea; margin: 0 6px;"></i>
+                                <span style="color: #667eea; font-weight: 600;">${ride.endLocation}</span>
+                            </div>
+                            <div class="ride-meta" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                                <span class="ride-date" style="background: rgba(102, 126, 234, 0.1); padding: 2px 6px; border-radius: 8px; color: #667eea; font-weight: 500;">🕐 ${timeAgo}</span>
+                                <span class="ride-duration" style="background: rgba(255, 193, 7, 0.1); padding: 2px 6px; border-radius: 8px; color: #856404; font-weight: 500;">⏱️ ${ride.timerDuration || 15}m</span>
+                                <span class="ride-status badge completed" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; animation: pulse 2s infinite; border-radius: 8px; padding: 0 4px">✨ completed</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            ridesContainer.innerHTML = ridesHTML;
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            
+            return date.toLocaleDateString();
+        }
+    </script>
+</body>
+</html>
