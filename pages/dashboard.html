@@ -565,373 +565,323 @@
         &copy; 2025 HopOn. Making campus mobility effortless.
     </div>
 
-    <!-- Inline Storage System (Simplified) -->
+    <!-- JavaScript Files -->
+    <script src="../js/api.js"></script>
+    <script src="../js/storage.js"></script>
     <script>
-        // Simplified storage system for testing
-        const testStorage = {
-            getCurrentUser: function() {
-                const userData = localStorage.getItem('hopOnCurrentUser');
-                return userData ? JSON.parse(userData) : null;
-            },
-            
-            getAvailableBikes: function(location) {
-                const bikes = JSON.parse(localStorage.getItem('hopOnBikes') || '{}');
-                return Object.values(bikes).filter(bike => 
-                    bike.location === location && bike.isAvailable
-                );
-            },
-            
-            getUserRides: function(userId) {
-                const rides = JSON.parse(localStorage.getItem('hopOnRides') || '[]');
-                return rides.filter(ride => ride.userId === userId);
-            },
-            
-            getActiveRide: function(userId) {
-                const rides = this.getUserRides(userId);
-                return rides.find(ride => ride.status === 'active');
-            },
-            
-            logout: function() {
-                localStorage.setItem('hopOnCurrentUser', null);
-            }
-        };
+        // Dashboard initialization with API integration
+        async function initializeDashboard() {
+            console.log('📊 Dashboard initializing...');
 
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Standalone dashboard loading...');
-            
-            const user = testStorage.getCurrentUser();
-            if (!user) {
-                alert('No user logged in. Redirecting to login...');
-                window.location.href = '../index.html';
-                return;
+            try {
+                // Check authentication
+                const user = await storage.getCurrentUser();
+                if (!user) {
+                    alert('Please login to access dashboard.');
+                    window.location.href = '../login.html';
+                    return;
+                }
+
+                console.log('User authenticated:', user.name);
+
+                // Update user info
+                await updateUserInfo(user);
+                await updateUserStats(user);
+                await updateBikeStats();
+                await checkActiveRide(user);
+
+                console.log('✅ Dashboard initialized successfully');
+            } catch (error) {
+                console.error('❌ Dashboard initialization failed:', error);
+                showError('Failed to load dashboard. Please refresh the page.');
             }
-            
-            // Update user info
+        }
+
+        // Update user information display
+        async function updateUserInfo(user) {
             document.getElementById('userName').textContent = user.name;
-            document.getElementById('totalRides').textContent = user.totalRides || 0;
-            document.getElementById('totalRidesDisplay').textContent = user.totalRides || 0;
+
             // Update user avatar with first letter
             const userAvatar = document.querySelector('.user-avatar');
             if (userAvatar && user.name) {
                 userAvatar.textContent = user.name.charAt(0).toUpperCase();
-                console.log('Updated user avatar to:', user.name.charAt(0).toUpperCase());
             }
-            // Update total rides from actual ride history
-            const allRides = JSON.parse(localStorage.getItem('hopOnRides') || '[]');
-            const userRides = allRides.filter(ride => ride.userId === user.id);
-            const completedRides = userRides.filter(ride => ride.status === 'completed');
-
-            console.log('User rides found:', userRides.length);
-            console.log('Completed rides:', completedRides.length);
-
-            // Update rides count
-            document.getElementById('totalRides').textContent = completedRides.length;
-            document.getElementById('totalRidesDisplay').textContent = completedRides.length;
-
-            // Calculate total time from all completed rides
-            let totalMinutes = 0;
-            completedRides.forEach(ride => {
-                // Add the timer duration (what user selected) for each completed ride
-                totalMinutes += ride.timerDuration || 15; // Default to 15 if not set
-            });
-
-            console.log('Total minutes:', totalMinutes);
-
-            // Convert to hours and minutes for display
-            const totalHours = Math.floor(totalMinutes / 60);
-            const remainingMinutes = totalMinutes % 60;
-
-            // Update total time display
-            const totalTimeEl = document.getElementById('totalTimeDisplay');
-            if (totalTimeEl) {
-                if (totalHours > 0) {
-                    totalTimeEl.textContent = `${totalHours}h ${remainingMinutes}m`;
-                } else {
-                    totalTimeEl.textContent = `${remainingMinutes}m`;
-                }
-            }
-
-            console.log('Total time display:', totalHours > 0 ? `${totalHours}h ${remainingMinutes}m` : `${remainingMinutes}m`);
-            // Calculate favorite location (most frequently used start location)
-            const locationCount = {};
-            completedRides.forEach(ride => {
-                const startLocation = ride.startLocation;
-                if (startLocation) {
-                    locationCount[startLocation] = (locationCount[startLocation] || 0) + 1;
-                }
-            });
-
-            console.log('Location usage count:', locationCount);
-
-            // Find the location with highest count
-            let favoriteLocation = 'AB1'; // Default
-            let maxCount = 0;
-
-            for (const location in locationCount) {
-                if (locationCount[location] > maxCount) {
-                    maxCount = locationCount[location];
-                    favoriteLocation = location;
-                }
-            }
-
-            // Update favorite location display
-            const favLocationEl = document.getElementById('favLocationDisplay');
-            if (favLocationEl) {
-                if (maxCount > 0) {
-                    favLocationEl.textContent = favoriteLocation;
-                    console.log('Favorite location:', favoriteLocation, 'with', maxCount, 'rides');
-                } else {
-                    favLocationEl.textContent = 'No rides yet';
-                    console.log('No completed rides found');
-                }
-            }
-            // Update recent rides display
-            displayRecentRides(completedRides);
-            
-            // Update welcome message
-            const firstName = user.name.split(' ')[0];
-            const hour = new Date().getHours();
-            let greeting = 'Good morning';
-            if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
-            else if (hour >= 17) greeting = 'Good evening';
-            
-            document.getElementById('welcomeMessage').textContent = `${greeting}, ${firstName}!`;
-            
-            // Update bike counts
-            updateBikeCounts();
-            
-            // Update join date
-            const joinDate = new Date(user.createdAt);
-            const today = new Date();
-            const diffDays = Math.ceil((today - joinDate) / (1000 * 60 * 60 * 24));
-            
-            if (diffDays <= 1) {
-                document.getElementById('joinDateDisplay').textContent = 'Today';
-            } else if (diffDays <= 7) {
-                document.getElementById('joinDateDisplay').textContent = `${diffDays}d ago`;
-            } else {
-                document.getElementById('joinDateDisplay').textContent = joinDate.toLocaleDateString();
-            }
-            // Check for active rides
-            checkActiveRides(user);
-            console.log('Dashboard initialized for:', user.name);
-        });
-        
-        function updateBikeCounts() {
-            const locations = ['AB1', 'AB2', 'BOYS HOSTEL', 'GIRLS HOSTEL'];
-            const elementIds = ['ab1-bikes', 'ab2-bikes', 'boys-hostel-bikes', 'girls-hostel-bikes'];
-            
-            locations.forEach((location, index) => {
-                const availableBikes = testStorage.getAvailableBikes(location);
-                const element = document.getElementById(elementIds[index]);
-                if (element) {
-                    element.textContent = `${availableBikes.length} bikes`;
-                }
-            });
         }
-        function checkActiveRides(user) {
-            console.log('Checking for active rides...');
-            
-            const activeRide = testStorage.getActiveRide(user.id);
+
+        // Update user statistics
+        async function updateUserStats(user) {
+            try {
+                const rides = await storage.getUserRides(user.id);
+                const completedRides = rides.filter(ride => ride.status === 'completed');
+
+                // Update rides count
+                document.getElementById('totalRides').textContent = completedRides.length;
+                document.getElementById('totalRidesDisplay').textContent = completedRides.length;
+
+                // Calculate total time from all completed rides
+                let totalMinutes = 0;
+                completedRides.forEach(ride => {
+                    totalMinutes += ride.timerDuration || 15;
+                });
+
+                // Convert to hours and minutes for display
+                const totalHours = Math.floor(totalMinutes / 60);
+                const remainingMinutes = totalMinutes % 60;
+
+                // Update total time display
+                const totalTimeEl = document.getElementById('totalTimeDisplay');
+                if (totalTimeEl) {
+                    if (totalHours > 0) {
+                        totalTimeEl.textContent = `${totalHours}h ${remainingMinutes}m`;
+                    } else {
+                        totalTimeEl.textContent = `${remainingMinutes}m`;
+                    }
+                }
+
+                // Calculate favorite location
+                const locationCount = {};
+                completedRides.forEach(ride => {
+                    const startLocation = ride.startLocation;
+                    if (startLocation) {
+                        locationCount[startLocation] = (locationCount[startLocation] || 0) + 1;
+                    }
+                });
+
+                let favoriteLocation = 'Not yet';
+                let maxCount = 0;
+                for (const location in locationCount) {
+                    if (locationCount[location] > maxCount) {
+                        maxCount = locationCount[location];
+                        favoriteLocation = location;
+                    }
+                }
+
+                const favLocationEl = document.getElementById('favoriteLocationDisplay');
+                if (favLocationEl) {
+                    favLocationEl.textContent = favoriteLocation;
+                }
+            } catch (error) {
+                console.error('Error updating user stats:', error);
+            }
+        }
+
+        // Update bike statistics
+        async function updateBikeStats() {
+            try {
+                const stats = await storage.getStats();
+
+                // Update available bikes count
+                const availableBikesEl = document.getElementById('availableBikes');
+                if (availableBikesEl && stats) {
+                    availableBikesEl.textContent = stats.totalBikes - stats.activeRides || 25;
+                }
+
+                // Update total system bikes
+                const totalBikesEl = document.getElementById('totalBikesSystem');
+                if (totalBikesEl && stats) {
+                    totalBikesEl.textContent = stats.totalBikes || 25;
+                }
+            } catch (error) {
+                console.error('Error updating bike stats:', error);
+                // Fallback values
+                const availableBikesEl = document.getElementById('availableBikes');
+                if (availableBikesEl) availableBikesEl.textContent = '25';
+            }
+        }
+
+        // Check for active ride
+        async function checkActiveRide(user) {
+            try {
+                const activeRide = await storage.getActiveRide(user.id);
+
+                if (activeRide) {
+                    console.log('🚴‍♂️ Active ride found:', activeRide);
+                    showActiveRideSection(activeRide);
+                } else {
+                    console.log('No active ride');
+                    hideActiveRideSection();
+                }
+            } catch (error) {
+                console.error('Error checking active ride:', error);
+                hideActiveRideSection();
+            }
+        }
+
+        // Show active ride section
+        function showActiveRideSection(ride) {
             const activeRideSection = document.getElementById('activeRide');
             const startRideBtn = document.getElementById('startRideBtn');
-            
-            if (activeRide) {
-                console.log('Active ride found:', activeRide);
-                
-                // Show active ride section
-                if (activeRideSection) {
-                    activeRideSection.style.display = 'block';
-                }
-                
-                // Hide start ride button
-                if (startRideBtn) {
-                    startRideBtn.style.display = 'none';
-                }
-                
-                // Update active ride info
+
+            if (activeRideSection) {
+                activeRideSection.style.display = 'block';
+
+                // Update ride details
                 const bikeIdEl = document.getElementById('activeBikeId');
                 const routeEl = document.getElementById('activeRoute');
-                
-                if (bikeIdEl) bikeIdEl.textContent = activeRide.bikeId;
+
+                if (bikeIdEl) bikeIdEl.textContent = ride.bikeId;
                 if (routeEl) {
-                    routeEl.innerHTML = `${activeRide.startLocation} → ${activeRide.endLocation}`;
-                        }
+                    routeEl.innerHTML = `${ride.startLocation} → ${ride.endLocation}`;
+                }
 
                 // Start timer
-                startTimer(activeRide);
+                startRideTimer(ride);
+            }
 
-                // Setup end ride button
-                const endRideBtn = document.getElementById('endRideBtn');
-                if (endRideBtn) {
-                    endRideBtn.onclick = function() {
-                        endRideNow(activeRide);
-                    };
-                }
-                
-            } else {
-                console.log('No active rides');
-                
-                // Hide active ride section
-                if (activeRideSection) {
-                    activeRideSection.style.display = 'none';
-                }
-                
-                // Show start ride button
-                if (startRideBtn) {
-                    startRideBtn.style.display = 'block';
-                }
+            if (startRideBtn) {
+                startRideBtn.style.display = 'none';
             }
         }
-        function endRideNow(activeRide) {
-            console.log('Ending ride:', activeRide.id);
-            
-            if (confirm('Are you sure you want to end your ride?')) {
-                // Use the same auto-end function we already have
-                autoEndRide(activeRide);
+
+        // Hide active ride section
+        function hideActiveRideSection() {
+            const activeRideSection = document.getElementById('activeRide');
+            const startRideBtn = document.getElementById('startRideBtn');
+
+            if (activeRideSection) {
+                activeRideSection.style.display = 'none';
+            }
+
+            if (startRideBtn) {
+                startRideBtn.style.display = 'block';
             }
         }
-        function startTimer(ride) {
-            console.log('Starting timer for ride:', ride.id);
-            
+
+        // Start ride timer
+        function startRideTimer(ride) {
+            if (window.rideTimer) clearInterval(window.rideTimer);
+
             const startTime = new Date(ride.startTime);
-            const duration = ride.timerDuration || 15; // Default 15 minutes
-            const endTime = new Date(startTime.getTime() + (duration * 60 * 1000));
-            
-            const timer = setInterval(function() {
+            const timerDuration = ride.timerDuration * 60 * 1000; // Convert to milliseconds
+
+            window.rideTimer = setInterval(() => {
                 const now = new Date();
-                const remaining = endTime - now;
-                
-                if (remaining <= 0) {
-                    clearInterval(timer);
-                    console.log('Ride timer expired - auto-ending ride');
-                    
-                    // Auto-end the ride
-                    autoEndRide(ride);
-                    return;
-                }
-                
+                const elapsed = now - startTime;
+                const remaining = Math.max(0, timerDuration - elapsed);
+
                 const minutes = Math.floor(remaining / (1000 * 60));
                 const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-                
+
                 const timerEl = document.getElementById('rideTimer');
                 if (timerEl) {
-                    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    timerEl.textContent = timeString;
+
+                    // Change color when time is running low
+                    if (remaining < 2 * 60 * 1000) {
+                        timerEl.classList.add('warning');
+                    } else if (remaining < 5 * 60 * 1000) {
+                        timerEl.classList.add('caution');
+                    }
+                }
+
+                // Auto-end ride when timer expires
+                if (remaining <= 0) {
+                    autoEndRide(ride);
                 }
             }, 1000);
         }
-        function autoEndRide(ride) {
-            console.log('Auto-ending ride:', ride.id);
-            
-            try {
-                // Mark ride as completed
-                let rides = JSON.parse(localStorage.getItem('hopOnRides') || '[]');
-                const rideIndex = rides.findIndex(r => r.id === ride.id);
-                
-                if (rideIndex !== -1) {
-                    rides[rideIndex].status = 'completed';
-                    rides[rideIndex].endTime = new Date().toISOString();
-                    rides[rideIndex].actualDuration = ride.timerDuration;
-                    localStorage.setItem('hopOnRides', JSON.stringify(rides));
-                }
-                
-                // Return bike to destination
-                let bikes = JSON.parse(localStorage.getItem('hopOnBikes') || '{}');
-                if (bikes[ride.bikeId]) {
-                    bikes[ride.bikeId].isAvailable = true;
-                    bikes[ride.bikeId].location = ride.endLocation;
-                    bikes[ride.bikeId].currentUser = null;
-                    bikes[ride.bikeId].bookedAt = null;
-                    bikes[ride.bikeId].totalRides += 1;
-                    localStorage.setItem('hopOnBikes', JSON.stringify(bikes));
-                }
-                
-                console.log('Ride ended successfully');
-                
-                // Refresh the dashboard
-                location.reload();
-                
-            } catch (error) {
-                console.error('Error ending ride:', error);
-            }
-        }
-        
-        function startRide() {
-            window.location.href = 'booking.html';
-        }
-        
-        function viewHistory() {
-        window.location.href = 'history.html';
-        }
-        
-        function refreshData() {
-            window.location.reload();
-        }
-        
-        function showHelp() {
-            alert('❓ Help & Support\n\n📧 Email: vinit.24bsa10084@vitbhopal.ac.in\n📞 Phone: +91-9509893634');
-        }
-        
-        function logout() {
-            testStorage.logout();
-            alert('👋 Logged out successfully!');
-            window.location.href = '../index.html';
-        }
-        
-        function endRide() {
-            console.log('End ride button clicked');
-    
-            // Get the current active ride
-            const user = testStorage.getCurrentUser();
-            const activeRide = testStorage.getActiveRide(user.id);
-            
-            if (activeRide && confirm('Are you sure you want to end your ride?')) {
-                autoEndRide(activeRide);
-            }
-        }
-        function displayRecentRides(completedRides) {
-            const ridesContainer = document.getElementById('recentRides');
-            if (!ridesContainer) return;
 
-            // Get last 2 rides only (most recent first)
-            const sortedRides = completedRides.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
-            const recentRides = sortedRides.slice(0, 2);
-    
-            if (recentRides.length === 0) {
-                ridesContainer.innerHTML = `
-                    <div class="no-rides">
-                        <div style="font-size: 40px; margin-bottom: 10px; filter: hue-rotate(20deg);">🚴‍♂️</div>
-                        <p>No rides yet. <span style="color: #667eea; font-weight: 600;">Start your first adventure!</span></p>
-                    </div>
-                `;
+        // Auto-end ride
+        async function autoEndRide(ride) {
+            if (window.rideTimer) {
+                clearInterval(window.rideTimer);
+                window.rideTimer = null;
+            }
+
+            try {
+                await storage.completeRide(ride.id, ride.endLocation, null, 'Timer expired');
+                showMessage('Your ride has ended automatically due to timer expiry!', 'warning');
+
+                // Refresh dashboard
+                const user = await storage.getCurrentUser();
+                await checkActiveRide(user);
+                await updateUserStats(user);
+            } catch (error) {
+                console.error('Error auto-ending ride:', error);
+                showMessage('Error ending ride automatically. Please end manually.', 'error');
+            }
+        }
+
+        // Utility functions
+        function showMessage(message, type = 'info') {
+            const messageEl = document.createElement('div');
+            messageEl.className = `alert alert-${type}`;
+            messageEl.textContent = message;
+
+            document.body.appendChild(messageEl);
+
+            setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.parentNode.removeChild(messageEl);
+                }
+            }, 5000);
+        }
+
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+
+        // Event handlers
+        function showHelp() {
+            alert('❓ Help & Support\n\n📧 Email: support@hopon.com\n📞 Phone: +91-XXXX-XXXX-XX');
+        }
+
+        async function logout() {
+            try {
+                storage.logout();
+                showMessage('Logged out successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = '../login.html';
+                }, 1000);
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '../login.html';
+            }
+        }
+
+        async function endRide() {
+            const user = await storage.getCurrentUser();
+            if (!user) return;
+
+            const activeRide = await storage.getActiveRide(user.id);
+            if (!activeRide) {
+                showMessage('No active ride found.', 'warning');
                 return;
             }
 
-            const ridesHTML = recentRides.map((ride, index) => {
-                const startTime = new Date(ride.startTime);
-                const timeAgo = getTimeAgo(startTime);
-                
-                return `
-                    <div class="ride-item completed" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%); border-left: 4px solid #667eea; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 15px;">
-                        <div class="ride-info">
-                            <div class="ride-route" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px;">
-                                <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 8px;">🚴‍♂️ ${ride.bikeId}</span>
-                                <span style="color: #667eea; font-weight: 600;">${ride.startLocation}</span>
-                                <i class="fas fa-arrow-right" style="color: #667eea; margin: 0 6px;"></i>
-                                <span style="color: #667eea; font-weight: 600;">${ride.endLocation}</span>
-                            </div>
-                            <div class="ride-meta" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-                                <span class="ride-date" style="background: rgba(102, 126, 234, 0.1); padding: 2px 6px; border-radius: 8px; color: #667eea; font-weight: 500;">🕐 ${timeAgo}</span>
-                                <span class="ride-duration" style="background: rgba(255, 193, 7, 0.1); padding: 2px 6px; border-radius: 8px; color: #856404; font-weight: 500;">⏱️ ${ride.timerDuration || 15}m</span>
-                                <span class="ride-status badge completed" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; animation: pulse 2s infinite; border-radius: 8px; padding: 0 4px">✨ completed</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            // Simple end ride - in production, you'd want a proper modal
+            const endLocation = prompt('Where are you parking the bike?\n\nOptions:\n- AB1\n- AB2\n- BOYS HOSTEL\n- GIRLS HOSTEL');
 
-            ridesContainer.innerHTML = ridesHTML;
+            if (endLocation && ['AB1', 'AB2', 'BOYS HOSTEL', 'GIRLS HOSTEL'].includes(endLocation.toUpperCase())) {
+                try {
+                    await storage.completeRide(activeRide.id, endLocation.toUpperCase());
+                    showMessage('Ride completed successfully!', 'success');
+
+                    // Refresh dashboard
+                    await checkActiveRide(user);
+                    await updateUserStats(user);
+                    await updateBikeStats();
+                } catch (error) {
+                    console.error('Error ending ride:', error);
+                    showMessage('Failed to end ride. Please try again.', 'error');
+                }
+            } else if (endLocation) {
+                showMessage('Please select a valid location.', 'error');
+            }
+        }
+
+        // Helper functions for backward compatibility
+        function startRide() {
+            window.location.href = 'booking.html';
+        }
+
+        function viewHistory() {
+            window.location.href = 'history.html';
+        }
+
+        function refreshData() {
+            window.location.reload();
         }
 
         function getTimeAgo(date) {
@@ -945,9 +895,26 @@
             if (diffMins < 60) return `${diffMins}m ago`;
             if (diffHours < 24) return `${diffHours}h ago`;
             if (diffDays < 7) return `${diffDays}d ago`;
-            
+
             return date.toLocaleDateString();
         }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for API and storage to be available
+            if (typeof api !== 'undefined' && typeof storage !== 'undefined') {
+                initializeDashboard();
+            } else {
+                console.warn('API or storage not available, retrying...');
+                setTimeout(() => {
+                    if (typeof api !== 'undefined' && typeof storage !== 'undefined') {
+                        initializeDashboard();
+                    } else {
+                        showError('Failed to load required services. Please refresh the page.');
+                    }
+                }, 1000);
+            }
+        });
     </script>
 </body>
 </html>
