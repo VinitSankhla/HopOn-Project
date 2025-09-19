@@ -1,157 +1,2204 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HopOn - Campus Bike Sharing</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚴‍♂️</text></svg>">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/components.css">
-    <!-- Google Fonts for modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <!-- Background Animation -->
-    <div class="bg-animation">
-        <div class="bike-icon"><i class="fas fa-bicycle"></i></div>
-        <div class="bike-icon"><i class="fas fa-bicycle"></i></div>
-        <div class="bike-icon"><i class="fas fa-bicycle"></i></div>
-    </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HopOn - Smart Campus Bike Sharing Platform</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚴‍♂️</text></svg>"
+    />
 
-    <div class="container">
-        <!-- Header with Logo -->
-        <header class="header">
-            <div class="logo-container">
-                <div class="logo">
-                    <i class="fas fa-bicycle logo-icon"></i>
-                    <span class="logo-text">HopOn</span>
-                </div>
-                <p class="tagline">Your Campus Ride, Simplified 🚴‍♂️</p>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <style>
+      /* Design System Variables */
+      :root {
+        /* Colors - Clean Modern Palette */
+        --primary-blue: #2563eb;
+        --primary-blue-light: #3b82f6;
+        --primary-blue-dark: #1d4ed8;
+
+        --secondary-green: #059669;
+        --secondary-green-light: #10b981;
+        --secondary-green-dark: #047857;
+
+        --accent-orange: #ea580c;
+        --accent-orange-light: #f97316;
+        --accent-orange-dark: #c2410c;
+
+        --neutral-50: #f8fafc;
+        --neutral-100: #f1f5f9;
+        --neutral-200: #e2e8f0;
+        --neutral-300: #cbd5e1;
+        --neutral-400: #94a3b8;
+        --neutral-500: #64748b;
+        --neutral-600: #475569;
+        --neutral-700: #334155;
+        --neutral-800: #1e293b;
+        --neutral-900: #0f172a;
+
+        --white: #ffffff;
+        --black: #000000;
+
+        /* Typography */
+        --font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-size-xs: 0.75rem;
+        --font-size-sm: 0.875rem;
+        --font-size-base: 1rem;
+        --font-size-lg: 1.125rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.5rem;
+        --font-size-3xl: 1.875rem;
+        --font-size-4xl: 2.25rem;
+        --font-size-5xl: 3rem;
+        --font-size-6xl: 3.75rem;
+
+        /* Spacing */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --space-16: 4rem;
+        --space-20: 5rem;
+        --space-24: 6rem;
+
+        /* Border Radius */
+        --radius-sm: 0.125rem;
+        --radius-md: 0.375rem;
+        --radius-lg: 0.5rem;
+        --radius-xl: 0.75rem;
+        --radius-2xl: 1rem;
+        --radius-3xl: 1.5rem;
+        --radius-full: 9999px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+        /* Transitions */
+        --transition-fast: 150ms ease-in-out;
+        --transition-normal: 200ms ease-in-out;
+        --transition-slow: 300ms ease-in-out;
+      }
+
+      /* Reset & Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-family);
+        line-height: 1.6;
+        color: var(--neutral-700);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Header Styles */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(248, 250, 252, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--neutral-200);
+        z-index: 1000;
+        padding: var(--space-4) 0;
+        transition: all var(--transition-normal);
+      }
+
+      .header.scrolled {
+        background: rgba(248, 250, 252, 0.98);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .nav-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--font-size-xl);
+        font-weight: 800;
+        color: var(--primary-blue);
+        text-decoration: none;
+        transition: all var(--transition-fast);
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+      }
+
+      .nav-menu {
+        display: flex;
+        list-style: none;
+        gap: var(--space-8);
+      }
+
+      .nav-menu a {
+        text-decoration: none;
+        color: var(--neutral-600);
+        font-weight: 500;
+        font-size: var(--font-size-sm);
+        transition: all var(--transition-fast);
+        position: relative;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-lg);
+      }
+
+      .nav-menu a:hover {
+        color: var(--primary-blue);
+        background: var(--neutral-100);
+      }
+
+      .nav-menu a.active {
+        color: var(--primary-blue);
+        background: var(--neutral-100);
+      }
+
+      .cta-btn {
+        background: var(--primary-blue);
+        color: var(--white);
+        padding: var(--space-3) var(--space-6);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+        text-decoration: none;
+        transition: all var(--transition-fast);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .cta-btn:hover {
+        background: var(--primary-blue-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: var(--font-size-xl);
+        color: var(--neutral-700);
+        cursor: pointer;
+      }
+
+      /* Hero Section */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: var(--neutral-50);
+        position: relative;
+        padding: var(--space-24) 0 var(--space-16);
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(
+            circle at 25% 25%,
+            var(--neutral-100) 2px,
+            transparent 2px
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            var(--neutral-100) 2px,
+            transparent 2px
+          );
+        background-size: 60px 60px;
+        background-position: 0 0, 30px 30px;
+        opacity: 0.5;
+      }
+
+      .hero-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: var(--space-16);
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-content {
+        max-width: 600px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        background: var(--secondary-green-light);
+        color: var(--white);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: var(--space-6);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .hero-content h1 {
+        font-size: var(--font-size-6xl);
+        font-weight: 800;
+        color: var(--neutral-900);
+        margin-bottom: var(--space-6);
+        line-height: 1.1;
+      }
+
+      .hero-content h1 .highlight {
+        color: var(--primary-blue);
+        position: relative;
+      }
+
+      .hero-content h1 .highlight::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--accent-orange);
+        border-radius: var(--radius-full);
+      }
+
+      .hero-content p {
+        font-size: var(--font-size-xl);
+        color: var(--neutral-600);
+        margin-bottom: var(--space-8);
+        line-height: 1.7;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: var(--space-4);
+        margin-bottom: var(--space-12);
+      }
+
+      .btn-primary {
+        background: var(--primary-blue);
+        color: var(--white);
+        padding: var(--space-4) var(--space-8);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        text-decoration: none;
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-md);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-blue-dark);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .btn-secondary {
+        background: var(--white);
+        color: var(--neutral-700);
+        border: 2px solid var(--neutral-300);
+        padding: calc(var(--space-4) - 2px) calc(var(--space-8) - 2px);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        text-decoration: none;
+        transition: all var(--transition-normal);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .btn-secondary:hover {
+        background: var(--neutral-50);
+        border-color: var(--primary-blue);
+        color: var(--primary-blue);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-8);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: var(--font-size-4xl);
+        font-weight: 800;
+        color: var(--primary-blue);
+        display: block;
+        margin-bottom: var(--space-1);
+      }
+
+      .stat-label {
+        font-size: var(--font-size-sm);
+        color: var(--neutral-500);
+        font-weight: 500;
+      }
+
+      .hero-visual {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .bike-showcase {
+        font-size: 12rem;
+        animation: float 4s ease-in-out infinite;
+        filter: drop-shadow(0 20px 40px rgba(37, 99, 235, 0.2));
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(-5deg);
+        }
+        50% {
+          transform: translateY(-30px) rotate(5deg);
+        }
+      }
+
+      .floating-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      .floating-card {
+        position: absolute;
+        background: var(--white);
+        padding: var(--space-4);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--neutral-200);
+        animation: floatCard 6s ease-in-out infinite;
+      }
+
+      .floating-card-1 {
+        top: 20%;
+        right: -10%;
+        animation-delay: 0s;
+      }
+
+      .floating-card-2 {
+        bottom: 30%;
+        left: -5%;
+        animation-delay: 2s;
+      }
+
+      .floating-card-3 {
+        top: 60%;
+        right: 20%;
+        animation-delay: 4s;
+      }
+
+      @keyframes floatCard {
+        0%,
+        100% {
+          transform: translateY(0px);
+          opacity: 0.8;
+        }
+        50% {
+          transform: translateY(-20px);
+          opacity: 1;
+        }
+      }
+
+      .card-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
+      }
+
+      .card-text {
+        font-size: var(--font-size-xs);
+        color: var(--neutral-600);
+        font-weight: 600;
+      }
+
+      /* Features Section */
+      .features {
+        padding: var(--space-24) 0;
+        background: var(--white);
+      }
+
+      .features-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: var(--space-20);
+      }
+
+      .section-badge {
+        display: inline-block;
+        background: var(--primary-blue);
+        color: var(--white);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-xs);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: var(--space-4);
+      }
+
+      .section-title {
+        font-size: var(--font-size-5xl);
+        font-weight: 800;
+        color: var(--neutral-900);
+        margin-bottom: var(--space-6);
+        line-height: 1.2;
+      }
+
+      .section-subtitle {
+        font-size: var(--font-size-xl);
+        color: var(--neutral-600);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--space-8);
+      }
+
+      .feature-card {
+        background: var(--white);
+        padding: var(--space-8);
+        border-radius: var(--radius-2xl);
+        border: 2px solid var(--neutral-200);
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-2xl);
+        border-color: var(--primary-blue);
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-blue);
+        transform: scaleX(0);
+        transition: transform var(--transition-normal);
+      }
+
+      .feature-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        background: var(--neutral-100);
+        border-radius: var(--radius-xl);
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-6);
+        transition: all var(--transition-normal);
+      }
+
+      .feature-card:hover .feature-icon {
+        background: var(--primary-blue);
+        color: var(--white);
+        transform: rotate(10deg) scale(1.1);
+      }
+
+      .feature-card h3 {
+        font-size: var(--font-size-2xl);
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin-bottom: var(--space-4);
+      }
+
+      .feature-card p {
+        color: var(--neutral-600);
+        line-height: 1.7;
+        margin-bottom: var(--space-6);
+      }
+
+      .feature-link {
+        color: var(--primary-blue);
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        transition: all var(--transition-fast);
+      }
+
+      .feature-link:hover {
+        gap: var(--space-3);
+      }
+
+      /* How It Works Section */
+      .how-it-works {
+        padding: var(--space-24) 0;
+        background: var(--neutral-50);
+      }
+
+      .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--space-12);
+        margin-top: var(--space-20);
+      }
+
+      .step-card {
+        text-align: center;
+        position: relative;
+        background: var(--white);
+        padding: var(--space-8);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--neutral-200);
+        transition: all var(--transition-normal);
+      }
+
+      .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .step-number {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 60px;
+        background: var(--primary-blue);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xl);
+        font-weight: 800;
+        color: var(--white);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .step-card h3 {
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin: var(--space-8) 0 var(--space-4);
+      }
+
+      .step-card p {
+        color: var(--neutral-600);
+        line-height: 1.7;
+      }
+
+      .step-visual {
+        font-size: var(--font-size-4xl);
+        margin: var(--space-4) 0;
+      }
+
+      /* Demo Section */
+      .demo {
+        padding: var(--space-24) 0;
+        background: var(--white);
+      }
+
+      .demo-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+        text-align: center;
+      }
+
+      .demo-video {
+        background: var(--neutral-100);
+        border-radius: var(--radius-2xl);
+        padding: var(--space-20) var(--space-16);
+        margin: var(--space-12) 0;
+        border: 2px solid var(--neutral-200);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .demo-video::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+          45deg,
+          var(--neutral-200),
+          var(--neutral-200) 2px,
+          transparent 2px,
+          transparent 20px
+        );
+        opacity: 0.1;
+      }
+
+      .demo-placeholder {
+        font-size: var(--font-size-6xl);
+        color: var(--neutral-400);
+        margin-bottom: var(--space-4);
+      }
+
+      .demo-text {
+        color: var(--neutral-600);
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--space-8);
+      }
+
+      .demo-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-6);
+        margin-top: var(--space-12);
+      }
+
+      .demo-feature {
+        background: var(--neutral-50);
+        padding: var(--space-6);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--neutral-200);
+      }
+
+      .demo-feature-icon {
+        font-size: var(--font-size-2xl);
+        color: var(--primary-blue);
+        margin-bottom: var(--space-3);
+      }
+
+      .demo-feature h4 {
+        font-size: var(--font-size-base);
+        font-weight: 600;
+        color: var(--neutral-900);
+        margin-bottom: var(--space-2);
+      }
+
+      .demo-feature p {
+        font-size: var(--font-size-sm);
+        color: var(--neutral-600);
+      }
+
+      /* Stats Section */
+      .stats {
+        padding: var(--space-20) 0;
+        background: var(--primary-blue);
+        color: var(--white);
+      }
+
+      .stats-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-12);
+        text-align: center;
+      }
+
+      .stats-item {
+        padding: var(--space-6);
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-xl);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all var(--transition-normal);
+      }
+
+      .stats-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .stats-number {
+        font-size: var(--font-size-4xl);
+        font-weight: 800;
+        display: block;
+        margin-bottom: var(--space-2);
+        color: var(--white);
+      }
+
+      .stats-label {
+        font-size: var(--font-size-base);
+        opacity: 0.9;
+        font-weight: 500;
+      }
+
+      /* Testimonials Section */
+      .testimonials {
+        padding: var(--space-24) 0;
+        background: var(--neutral-50);
+      }
+
+      .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--space-8);
+        margin-top: var(--space-16);
+      }
+
+      .testimonial-card {
+        background: var(--white);
+        padding: var(--space-8);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--neutral-200);
+        position: relative;
+        transition: all var(--transition-normal);
+      }
+
+      .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .testimonial-quote {
+        font-size: var(--font-size-lg);
+        line-height: 1.7;
+        color: var(--neutral-700);
+        margin-bottom: var(--space-6);
+        font-style: italic;
+      }
+
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .author-avatar {
+        width: 48px;
+        height: 48px;
+        background: var(--primary-blue);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-weight: 700;
+        font-size: var(--font-size-lg);
+      }
+
+      .author-info h4 {
+        font-weight: 600;
+        color: var(--neutral-900);
+        margin-bottom: var(--space-1);
+      }
+
+      .author-info p {
+        color: var(--neutral-500);
+        font-size: var(--font-size-sm);
+      }
+
+      .quote-mark {
+        position: absolute;
+        top: var(--space-4);
+        right: var(--space-6);
+        font-size: var(--font-size-4xl);
+        color: var(--neutral-200);
+        font-family: serif;
+      }
+
+      /* FAQ Section */
+      .faq {
+        padding: var(--space-24) 0;
+        background: var(--white);
+      }
+
+      .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+      }
+
+      .faq-item {
+        border-bottom: 1px solid var(--neutral-200);
+        margin-bottom: var(--space-6);
+      }
+
+      .faq-question {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        padding: var(--space-6);
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--neutral-900);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all var(--transition-fast);
+      }
+
+      .faq-question:hover {
+        color: var(--primary-blue);
+      }
+
+      .faq-icon {
+        transition: transform var(--transition-fast);
+      }
+
+      .faq-item.active .faq-icon {
+        transform: rotate(180deg);
+      }
+
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: all var(--transition-normal);
+      }
+
+      .faq-item.active .faq-answer {
+        max-height: 200px;
+      }
+
+      .faq-answer-content {
+        padding: 0 var(--space-6) var(--space-6);
+        color: var(--neutral-600);
+        line-height: 1.7;
+      }
+
+      /* CTA Section */
+      .cta-section {
+        padding: var(--space-24) 0;
+        background: var(--primary-blue);
+        color: var(--white);
+        text-align: center;
+      }
+
+      .cta-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+      }
+
+      .cta-title {
+        font-size: var(--font-size-4xl);
+        font-weight: 800;
+        margin-bottom: var(--space-6);
+      }
+
+      .cta-subtitle {
+        font-size: var(--font-size-xl);
+        opacity: 0.9;
+        margin-bottom: var(--space-10);
+        line-height: 1.6;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: var(--space-4);
+        justify-content: center;
+        margin-bottom: var(--space-12);
+      }
+
+      .btn-cta-primary {
+        background: var(--white);
+        color: var(--primary-blue);
+        padding: var(--space-5) var(--space-10);
+        border: none;
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        text-decoration: none;
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .btn-cta-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-2xl);
+      }
+
+      .btn-cta-secondary {
+        background: transparent;
+        color: var(--white);
+        border: 2px solid var(--white);
+        padding: calc(var(--space-5) - 2px) calc(var(--space-10) - 2px);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        text-decoration: none;
+        transition: all var(--transition-normal);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .btn-cta-secondary:hover {
+        background: var(--white);
+        color: var(--primary-blue);
+        transform: translateY(-3px);
+      }
+
+      .cta-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--space-6);
+        margin-top: var(--space-12);
+      }
+
+      .cta-feature {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        justify-content: center;
+      }
+
+      .cta-feature-icon {
+        color: var(--secondary-green-light);
+        font-size: var(--font-size-lg);
+      }
+
+      .cta-feature-text {
+        font-weight: 500;
+        opacity: 0.9;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--neutral-900);
+        color: var(--neutral-300);
+        padding: var(--space-20) 0 var(--space-8);
+      }
+
+      .footer-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 var(--space-6);
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: var(--space-12);
+        margin-bottom: var(--space-16);
+      }
+
+      .footer-section h3 {
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: var(--space-6);
+      }
+
+      .footer-section p,
+      .footer-section li {
+        color: var(--neutral-400);
+        margin-bottom: var(--space-3);
+        line-height: 1.6;
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section a {
+        color: var(--neutral-400);
+        text-decoration: none;
+        transition: color var(--transition-fast);
+      }
+
+      .footer-section a:hover {
+        color: var(--primary-blue-light);
+      }
+
+      .footer-logo {
+        font-size: var(--font-size-2xl);
+        font-weight: 800;
+        color: var(--primary-blue-light);
+        margin-bottom: var(--space-4);
+      }
+
+      .footer-description {
+        margin-bottom: var(--space-6);
+      }
+
+      .social-links {
+        display: flex;
+        gap: var(--space-4);
+      }
+
+      .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--neutral-800);
+        border-radius: var(--radius-lg);
+        color: var(--neutral-400);
+        text-decoration: none;
+        transition: all var(--transition-fast);
+      }
+
+      .social-link:hover {
+        background: var(--primary-blue);
+        color: var(--white);
+        transform: translateY(-2px);
+      }
+
+      .footer-bottom {
+        border-top: 1px solid var(--neutral-800);
+        padding-top: var(--space-8);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--neutral-500);
+        font-size: var(--font-size-sm);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: var(--space-6);
+      }
+
+      .footer-links a {
+        color: var(--neutral-500);
+        text-decoration: none;
+        transition: color var(--transition-fast);
+      }
+
+      .footer-links a:hover {
+        color: var(--primary-blue-light);
+      }
+
+      /* Animations */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all var(--transition-slow);
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .slide-in-left {
+        opacity: 0;
+        transform: translateX(-40px);
+        transition: all var(--transition-slow);
+      }
+
+      .slide-in-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .slide-in-right {
+        opacity: 0;
+        transform: translateX(40px);
+        transition: all var(--transition-slow);
+      }
+
+      .slide-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .scale-in {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all var(--transition-slow);
+      }
+
+      .scale-in.visible {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      /* Loading Animation */
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: var(--radius-full);
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .hero-container {
+          grid-template-columns: 1fr;
+          text-align: center;
+          gap: var(--space-12);
+        }
+
+        .hero-visual {
+          order: -1;
+        }
+
+        .bike-showcase {
+          font-size: 8rem;
+        }
+
+        .floating-elements {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-menu {
+          display: none;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+
+        .hero-content h1 {
+          font-size: var(--font-size-4xl);
+        }
+
+        .hero-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .hero-stats {
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-6);
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .steps-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-content {
+          grid-template-columns: 1fr;
+          gap: var(--space-8);
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          gap: var(--space-4);
+          text-align: center;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero-content h1 {
+          font-size: var(--font-size-3xl);
+        }
+
+        .section-title {
+          font-size: var(--font-size-3xl);
+        }
+
+        .bike-showcase {
+          font-size: 6rem;
+        }
+
+        .hero-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header" id="header">
+      <div class="nav-container">
+        <a href="#" class="logo"> 🚴‍♂️ HopOn </a>
+        <nav>
+          <ul class="nav-menu">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How it Works</a></li>
+            <li><a href="#demo">Demo</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+        <button class="mobile-menu-btn">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a href="login.html" class="cta-btn">
+          <i class="fas fa-rocket"></i>
+          Get Started
+        </a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <i class="fas fa-star"></i>
+            Campus Innovation Award 2024
+          </div>
+          <h1>
+            Smart Campus <span class="highlight">Mobility</span> for the Digital
+            Age
+          </h1>
+          <p>
+            Transform your daily campus commute with HopOn's intelligent
+            bike-sharing platform. Designed by students, for students, with
+            cutting-edge features that make getting around campus effortless and
+            sustainable.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="login.html" class="btn-primary">
+              <i class="fas fa-bicycle"></i>
+              Start Your Journey
+            </a>
+            <a href="#demo" class="btn-secondary">
+              <i class="fas fa-play"></i>
+              Watch Demo
+            </a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number">25+</span>
+              <span class="stat-label">Smart Bikes</span>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Welcome Section -->
-            <div class="welcome-section">
-                <h1 class="welcome-title">Ready to <span class="highlight">HopOn</span>?</h1>
-                <p class="welcome-subtitle">Quick, easy campus rides at your fingertips</p>
+            <div class="stat-item">
+              <span class="stat-number">4</span>
+              <span class="stat-label">Key Locations</span>
             </div>
-
-            <!-- Auth Container -->
-            <div class="auth-container">
-                <!-- Login Form -->
-                <div id="loginForm" class="form-container active">
-                    <h2 class="form-title">Welcome Back!</h2>
-                    <form class="auth-form" id="login-form">
-                        <div class="input-group">
-                            <i class="fas fa-user input-icon"></i>
-                            <input type="text" id="loginId" placeholder="Enter your Login ID" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <i class="fas fa-lock input-icon"></i>
-                            <input type="password" id="loginPassword" placeholder="Enter your Password" required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword')"></i>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Login
-                        </button>
-                    </form>
-
-                    <div class="form-footer">
-                        <p>New to HopOn? <a href="#" onclick="showRegister()" class="link">Create Account</a></p>
-                    </div>
-                </div>
-
-                <!-- Register Form -->
-                <div id="registerForm" class="form-container">
-                    <h2 class="form-title">Join HopOn!</h2>
-                    <form class="auth-form" id="register-form">
-                        <div class="input-group">
-                            <i class="fas fa-user input-icon"></i>
-                            <input type="text" id="registerName" placeholder="Full Name" required>
-                        </div>
-
-                        <div class="input-group">
-                            <i class="fas fa-id-card input-icon"></i>
-                            <input type="text" id="registerLoginId" placeholder="Create Login ID" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" id="registerEmail" placeholder="Email Address" required>
-                        </div>
-
-                        <div class="input-group">
-                            <i class="fas fa-phone input-icon"></i>
-                            <input type="tel" id="registerPhone" placeholder="Phone Number" required>
-                        </div>
-                        
-                        <div class="input-group">
-                            <i class="fas fa-lock input-icon"></i>
-                            <input type="password" id="registerPassword" placeholder="Create Password" required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('registerPassword')"></i>
-                        </div>
-
-                        <div class="input-group">
-                            <i class="fas fa-lock input-icon"></i>
-                            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword')"></i>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i>
-                            Create Account
-                        </button>
-                    </form>
-
-                    <div class="form-footer">
-                        <p>Already have an account? <a href="#" onclick="showLogin()" class="link">Login here</a></p>
-                    </div>
-                </div>
+            <div class="stat-item">
+              <span class="stat-number">24/7</span>
+              <span class="stat-label">Availability</span>
             </div>
-        </main>
-
-        <!-- Features Preview -->
-        <section class="features-preview">
-            <div class="feature-item">
-                <i class="fas fa-clock feature-icon"></i>
-                <span>Quick 15-min rides</span>
-            </div>
-            <div class="feature-item">
-                <i class="fas fa-map-marker-alt feature-icon"></i>
-                <span>Campus-wide access</span>
-            </div>
-            <div class="feature-item">
-                <i class="fas fa-mobile-alt feature-icon"></i>
-                <span>Real-time tracking</span>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>&copy; 2025 HopOn. Making campus mobility effortless.</p>
-        </footer>
-    </div>
-
-    <!-- Success/Error Messages -->
-    <div id="message-container" class="message-container"></div>
-
-    <!-- Loading Spinner -->
-    <div id="loading" class="loading-overlay">
-        <div class="spinner">
-            <i class="fas fa-bicycle spinning"></i>
+          </div>
         </div>
-    </div>
+
+        <div class="hero-visual">
+          <div class="bike-showcase">🚴‍♂️</div>
+          <div class="floating-elements">
+            <div class="floating-card floating-card-1">
+              <div class="card-icon">⚡</div>
+              <div class="card-text">Lightning Fast</div>
+            </div>
+            <div class="floating-card floating-card-2">
+              <div class="card-icon">📱</div>
+              <div class="card-text">Mobile First</div>
+            </div>
+            <div class="floating-card floating-card-3">
+              <div class="card-icon">🎯</div>
+              <div class="card-text">Smart Routing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="features-container">
+        <div class="section-header fade-in">
+          <div class="section-badge">Features</div>
+          <h2 class="section-title">Why Students Choose HopOn</h2>
+          <p class="section-subtitle">
+            Built specifically for campus life, our platform combines
+            cutting-edge technology with user-friendly design to deliver the
+            ultimate bike-sharing experience.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card fade-in">
+            <div class="feature-icon">⚡</div>
+            <h3>Lightning-Fast Booking</h3>
+            <p>
+              Book your bike in under 30 seconds with our streamlined 4-step
+              process. No queues, no delays – just grab and go whenever you need
+              to get somewhere fast.
+            </p>
+            <a href="#" class="feature-link"
+              >Learn more <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile-First Design</h3>
+            <p>
+              Optimized for your smartphone with a responsive interface that
+              works perfectly whether you're planning ahead or booking on-the-go
+              between classes.
+            </p>
+            <a href="#" class="feature-link"
+              >See interface <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🎯</div>
+            <h3>Strategic Locations</h3>
+            <p>
+              Bikes are strategically placed at AB1, AB2, Boys Hostel, and Girls
+              Hostel – ensuring there's always a bike available where and when
+              you need it most.
+            </p>
+            <a href="#" class="feature-link"
+              >View map <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">⏰</div>
+            <h3>Flexible Timing</h3>
+            <p>
+              Customize your ride duration from 5 minutes to 2 hours. Perfect
+              for quick trips to the canteen or longer campus exploration
+              sessions.
+            </p>
+            <a href="#" class="feature-link"
+              >Set duration <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">📊</div>
+            <h3>Smart Analytics</h3>
+            <p>
+              Track your rides, view detailed statistics, and discover your
+              campus mobility patterns. Get insights into your daily routines
+              and optimize your time.
+            </p>
+            <a href="#" class="feature-link"
+              >View stats <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🎉</div>
+            <h3>Completely Free</h3>
+            <p>
+              Zero subscription fees, no hidden costs, no deposits required.
+              Education should be accessible, and so should getting to it. Just
+              ride and enjoy.
+            </p>
+            <a href="#" class="feature-link"
+              >Start free <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🔒</div>
+            <h3>Secure & Safe</h3>
+            <p>
+              Advanced security features with real-time bike tracking, secure
+              user authentication, and 24/7 support to ensure your safety on
+              every ride.
+            </p>
+            <a href="#" class="feature-link"
+              >Security info <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🌱</div>
+            <h3>Eco-Friendly</h3>
+            <p>
+              Reduce your carbon footprint while navigating campus. Every ride
+              contributes to a more sustainable campus environment and cleaner
+              air for everyone.
+            </p>
+            <a href="#" class="feature-link"
+              >Impact report <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="feature-card fade-in">
+            <div class="feature-icon">🎓</div>
+            <h3>Student-Centric</h3>
+            <p>
+              Built by students who understand campus life challenges. Features
+              are designed around class schedules, hostel timings, and academic
+              routines.
+            </p>
+            <a href="#" class="feature-link"
+              >Our story <i class="fas fa-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="features-container">
+        <div class="section-header fade-in">
+          <div class="section-badge">Process</div>
+          <h2 class="section-title">How HopOn Works</h2>
+          <p class="section-subtitle">
+            Four simple steps to transform your campus mobility experience. It's
+            so easy, you'll wonder how you managed without it.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card fade-in">
+            <div class="step-number">1</div>
+            <div class="step-visual">📍</div>
+            <h3>Choose Pickup Location</h3>
+            <p>
+              Select your starting point from our four strategic campus
+              locations. View real-time bike availability and choose the most
+              convenient spot for you.
+            </p>
+          </div>
+
+          <div class="step-card fade-in">
+            <div class="step-number">2</div>
+            <div class="step-visual">🎯</div>
+            <h3>Set Destination</h3>
+            <p>
+              Tell us where you're headed on campus. Our smart routing system
+              will calculate the optimal path and estimated travel time for your
+              journey.
+            </p>
+          </div>
+
+          <div class="step-card fade-in">
+            <div class="step-number">3</div>
+            <div class="step-visual">🚴‍♂️</div>
+            <h3>Select Your Bike</h3>
+            <p>
+              Choose from available bikes based on condition ratings, usage
+              history, and maintenance records. Each bike is carefully
+              maintained for your safety and comfort.
+            </p>
+          </div>
+
+          <div class="step-card fade-in">
+            <div class="step-number">4</div>
+            <div class="step-visual">✨</div>
+            <h3>Ride & Return</h3>
+            <p>
+              Start your journey with confidence. The timer begins
+              automatically, and you can end your ride anytime or let it
+              complete when your time is up.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+      <div class="demo-container">
+        <div class="section-header fade-in">
+          <div class="section-badge">Experience</div>
+          <h2 class="section-title">See HopOn in Action</h2>
+          <p class="section-subtitle">
+            Experience our intuitive interface and seamless user journey through
+            this interactive demonstration.
+          </p>
+        </div>
+
+        <div class="demo-video fade-in">
+          <div class="demo-placeholder">🎥</div>
+          <div class="demo-text">Interactive Demo Coming Soon</div>
+          <a href="login.html" class="btn-primary">Try Live Demo</a>
+        </div>
+
+        <div class="demo-features">
+          <div class="demo-feature fade-in">
+            <div class="demo-feature-icon">📱</div>
+            <h4>Mobile Experience</h4>
+            <p>Optimized for all devices</p>
+          </div>
+          <div class="demo-feature fade-in">
+            <div class="demo-feature-icon">⚡</div>
+            <h4>Real-time Updates</h4>
+            <p>Live bike availability</p>
+          </div>
+          <div class="demo-feature fade-in">
+            <div class="demo-feature-icon">🎯</div>
+            <h4>Smart Routing</h4>
+            <p>Optimized campus paths</p>
+          </div>
+          <div class="demo-feature fade-in">
+            <div class="demo-feature-icon">📊</div>
+            <h4>Usage Analytics</h4>
+            <p>Detailed ride insights</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="stats-container">
+        <div class="stats-grid">
+          <div class="stats-item fade-in">
+            <span class="stats-number" data-target="500">0</span>
+            <span class="stats-label">Students Served</span>
+          </div>
+          <div class="stats-item fade-in">
+            <span class="stats-number" data-target="1250">0</span>
+            <span class="stats-label">Total Rides</span>
+          </div>
+          <div class="stats-item fade-in">
+            <span class="stats-number" data-target="98">0</span>
+            <span class="stats-label">% Satisfaction Rate</span>
+          </div>
+          <div class="stats-item fade-in">
+            <span class="stats-number" data-target="15">0</span>
+            <span class="stats-label">Avg. Ride Time (min)</span>
+          </div>
+          <div class="stats-item fade-in">
+            <span class="stats-number" data-target="24">0</span>
+            <span class="stats-label">Hours Available</span>
+          </div>
+          <div class="stats-item fade-in">
+            <span class="stats-number" data-target="0">0</span>
+            <span class="stats-label">Cost Per Ride (₹)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+      <div class="features-container">
+        <div class="section-header fade-in">
+          <div class="section-badge">Reviews</div>
+          <h2 class="section-title">What Students Say</h2>
+          <p class="section-subtitle">
+            Real feedback from students who have transformed their campus
+            experience with HopOn.
+          </p>
+        </div>
+
+        <div class="testimonials-grid">
+          <div class="testimonial-card fade-in">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-quote">
+              "HopOn has completely changed how I navigate campus. No more
+              rushing between classes or being late for lectures. The booking
+              process is so simple, and the bikes are always in great
+              condition!"
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">P</div>
+              <div class="author-info">
+                <h4>Priya Sharma</h4>
+                <p>Computer Science, 3rd Year</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-quote">
+              "As someone living in the hostel, HopOn is a lifesaver! Quick
+              trips to AB blocks for labs, library visits, or even grabbing food
+              from the canteen - everything is so much faster now."
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">A</div>
+              <div class="author-info">
+                <h4>Arjun Patel</h4>
+                <p>Mechanical Engineering, 2nd Year</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-quote">
+              "The analytics feature is amazing! I can track my daily movement
+              patterns and plan my schedule better. Plus, it's completely free -
+              perfect for student budgets!"
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">S</div>
+              <div class="author-info">
+                <h4>Sneha Gupta</h4>
+                <p>Electronics Engineering, 4th Year</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-quote">
+              "The real-time bike availability feature is genius. I can check
+              from my room if bikes are available before heading out. Saves so
+              much time and frustration!"
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">R</div>
+              <div class="author-info">
+                <h4>Rahul Kumar</h4>
+                <p>Civil Engineering, 3rd Year</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-quote">
+              "HopOn made my final year project submissions so much easier.
+              Quick rides between departments, library, and printing shops. The
+              flexible timing feature is perfect!"
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">M</div>
+              <div class="author-info">
+                <h4>Meera Singh</h4>
+                <p>Information Technology, 4th Year</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card fade-in">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-quote">
+              "Being eco-friendly while being convenient - that's HopOn for you!
+              I love how this initiative is making our campus more sustainable
+              while solving real mobility problems."
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">D</div>
+              <div class="author-info">
+                <h4>Dev Trivedi</h4>
+                <p>Environmental Engineering, 3rd Year</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+      <div class="faq-container">
+        <div class="section-header fade-in">
+          <div class="section-badge">Support</div>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">
+            Everything you need to know about using HopOn on your campus.
+          </p>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            How do I book a bike on HopOn?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Booking is simple! Just follow our 4-step process: Choose your
+              pickup location, select your destination, pick an available bike
+              from the list, and set your ride duration. The entire process
+              takes less than 30 seconds.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            Is HopOn really completely free to use?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Yes! HopOn is completely free for all students. There are no
+              subscription fees, no hidden charges, no security deposits, and no
+              booking fees. We believe student mobility should be accessible to
+              everyone.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            What happens if I exceed my booked time?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              The system automatically ends your ride when the timer expires,
+              and the bike becomes available for others. You can also manually
+              end your ride early if you finish before your allocated time.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            How do I know if bikes are available at my location?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Our app shows real-time bike availability at all four campus
+              locations (AB1, AB2, Boys Hostel, Girls Hostel). You can check
+              availability before leaving your room to save time.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            What if a bike breaks down during my ride?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              If you encounter any issues with your bike, immediately end your
+              ride through the app and report the problem. Our maintenance team
+              will be notified instantly, and you won't be charged for the
+              incomplete ride.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            Can I reserve a bike in advance?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Currently, HopOn operates on a real-time booking system. However,
+              we're working on an advance booking feature for high-demand
+              periods like exam weeks and special events.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            How is bike maintenance handled?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Each bike undergoes regular maintenance checks. Users can rate
+              bike condition after each ride, helping us identify bikes that
+              need attention. Our maintenance team performs daily inspections
+              and repairs.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in">
+          <button class="faq-question">
+            Is there customer support available?
+            <i class="fas fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              Yes! Our support team is available 24/7 via email
+              (support@hopon.com) and phone (+91-9876543210). We also have
+              campus representatives who can assist with immediate issues.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-container">
+        <h2 class="cta-title">Ready to Transform Your Campus Experience?</h2>
+        <p class="cta-subtitle">
+          Join hundreds of students who have already discovered the easiest way
+          to navigate campus. Start your HopOn journey today and never be late
+          for class again.
+        </p>
+
+        <div class="cta-buttons">
+          <a href="login.html" class="btn-cta-primary">
+            <i class="fas fa-bicycle"></i>
+            Start Riding Now
+          </a>
+          <a href="pages/history.html" class="btn-cta-secondary">
+            <i class="fas fa-eye"></i>
+            View Demo
+          </a>
+        </div>
+
+        <div class="cta-features">
+          <div class="cta-feature">
+            <i class="fas fa-check-circle cta-feature-icon"></i>
+            <span class="cta-feature-text">100% Free</span>
+          </div>
+          <div class="cta-feature">
+            <i class="fas fa-check-circle cta-feature-icon"></i>
+            <span class="cta-feature-text">No Registration Fee</span>
+          </div>
+          <div class="cta-feature">
+            <i class="fas fa-check-circle cta-feature-icon"></i>
+            <span class="cta-feature-text">Available 24/7</span>
+          </div>
+          <div class="cta-feature">
+            <i class="fas fa-check-circle cta-feature-icon"></i>
+            <span class="cta-feature-text">Instant Access</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <div class="footer-logo">🚴‍♂️ HopOn</div>
+            <p class="footer-description">
+              Revolutionizing campus mobility with intelligent, sustainable, and
+              student-friendly bike sharing solutions. Built by students, for
+              students.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+              <a href="#" class="social-link"
+                ><i class="fab fa-linkedin"></i
+              ></a>
+              <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-link"
+                ><i class="fab fa-instagram"></i
+              ></a>
+            </div>
+          </div>
+
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="login.html">Get Started</a></li>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#how-it-works">How It Works</a></li>
+              <li><a href="pages/history.html">Demo</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Campus Locations</h3>
+            <ul>
+              <li>📍 Academic Block 1 (AB1)</li>
+              <li>📍 Academic Block 2 (AB2)</li>
+              <li>📍 Boys Hostel Complex</li>
+              <li>📍 Girls Hostel Complex</li>
+              <li>📍 Central Library (Coming Soon)</li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Support</h3>
+            <ul>
+              <li>📧 support@hopon.com</li>
+              <li>📞 +91-9876543210</li>
+              <li>💬 Live Chat Available</li>
+              <li>🕒 24/7 Support</li>
+              <li>📋 Report an Issue</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            &copy; 2025 HopOn Campus Mobility. Built with ❤️ by students, for
+            students.
+          </p>
+          <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </footer>
 
     <!-- JavaScript -->
-    <script src="js/storage.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/app.js"></script>
-</body>
+    <script>
+      // Header scroll effect
+      window.addEventListener("scroll", () => {
+        const header = document.getElementById("header");
+        if (window.scrollY > 100) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      });
+
+      // Smooth scroll for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // Intersection Observer for animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      }, observerOptions);
+
+      // Observe all animated elements
+      document
+        .querySelectorAll(
+          ".fade-in, .slide-in-left, .slide-in-right, .scale-in"
+        )
+        .forEach((el) => {
+          observer.observe(el);
+        });
+
+      // FAQ Toggle functionality
+      document.querySelectorAll(".faq-question").forEach((button) => {
+        button.addEventListener("click", () => {
+          const faqItem = button.parentElement;
+          const isActive = faqItem.classList.contains("active");
+
+          // Close all FAQ items
+          document.querySelectorAll(".faq-item").forEach((item) => {
+            item.classList.remove("active");
+          });
+
+          // Toggle current item
+          if (!isActive) {
+            faqItem.classList.add("active");
+          }
+        });
+      });
+
+      // Animated counter for statistics
+      const animateCounter = (element, target, duration = 2000) => {
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+          } else {
+            element.textContent = Math.floor(current);
+          }
+        }, 16);
+      };
+
+      // Stats animation on scroll
+      const statsObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const statsNumbers =
+                entry.target.querySelectorAll(".stats-number");
+              statsNumbers.forEach((stat) => {
+                const target = parseInt(stat.getAttribute("data-target"));
+                animateCounter(stat, target, 2000);
+              });
+              statsObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+
+      const statsSection = document.querySelector(".stats");
+      if (statsSection) {
+        statsObserver.observe(statsSection);
+      }
+
+      // Mobile menu functionality (for future enhancement)
+      const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+      const navMenu = document.querySelector(".nav-menu");
+
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener("click", () => {
+          navMenu.classList.toggle("active");
+          const icon = mobileMenuBtn.querySelector("i");
+          icon.classList.toggle("fa-bars");
+          icon.classList.toggle("fa-times");
+        });
+      }
+
+      // Add loading state to buttons
+      document
+        .querySelectorAll(".btn-primary, .btn-secondary, .cta-btn")
+        .forEach((button) => {
+          button.addEventListener("click", function (e) {
+            // Don't add loading state for anchor links
+            if (
+              this.getAttribute("href") &&
+              !this.getAttribute("href").startsWith("#")
+            ) {
+              const originalContent = this.innerHTML;
+              this.innerHTML =
+                '<span class="loading-spinner"></span> Loading...';
+              this.style.pointerEvents = "none";
+
+              // Reset after navigation (this won't actually run due to page change, but good practice)
+              setTimeout(() => {
+                this.innerHTML = originalContent;
+                this.style.pointerEvents = "auto";
+              }, 2000);
+            }
+          });
+        });
+
+      // Add hover effect to feature cards
+      document.querySelectorAll(".feature-card").forEach((card) => {
+        card.addEventListener("mouseenter", () => {
+          card.style.transform = "translateY(-8px) scale(1.02)";
+        });
+
+        card.addEventListener("mouseleave", () => {
+          card.style.transform = "translateY(0) scale(1)";
+        });
+      });
+
+      // Testimonials carousel functionality (basic version)
+      const testimonialCards = document.querySelectorAll(".testimonial-card");
+      let currentTestimonial = 0;
+
+      function showNextTestimonial() {
+        testimonialCards.forEach((card) => (card.style.opacity = "0.7"));
+        if (testimonialCards[currentTestimonial]) {
+          testimonialCards[currentTestimonial].style.opacity = "1";
+        }
+        currentTestimonial = (currentTestimonial + 1) % testimonialCards.length;
+      }
+
+      // Highlight testimonials every 3 seconds
+      setInterval(showNextTestimonial, 3000);
+
+      // Console branding
+      console.log(
+        "%cHopOn 🚴‍♂️",
+        "font-size: 24px; font-weight: bold; color: #2563eb;"
+      );
+      console.log(
+        "%cBuilt with ❤️ by students, for students",
+        "font-size: 14px; color: #64748b;"
+      );
+
+      console.log("Welcome to HopOn! 🚴‍♂️");
+      console.log(
+        "Interested in contributing? Check out our GitHub repository!"
+      );
+    </script>
+  </body>
 </html>

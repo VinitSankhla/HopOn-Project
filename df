@@ -1,0 +1,73 @@
+[33mcommit f5385ce86981c7841f86cac4e0d6dbc00b3764bc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 23:45:20 2025 +0530
+
+    updated pages (booking, dashboard, history)
+
+[33mcommit fe56851ab9f75427a8556e38dbec1370c6ee8491[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 22:55:58 2025 +0530
+
+    js folder setup
+
+[33mcommit 4fb5e0e704ab0bd8f7bc7cd7ffde6a5b2cdcf239[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 20:29:41 2025 +0530
+
+    added validators and server file
+
+[33mcommit c69a3ef5dc9eeaaade3039dcc540a46a4e766fa4[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 16:05:30 2025 +0530
+
+    added controllers and routes
+
+[33mcommit edd9cdebf898e26f251f539225fff7259a151db6[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 15:04:22 2025 +0530
+
+    added entities(Bike, Ride, User), middleware(auth.ts)
+
+[33mcommit 0018c9c62b502ec3dc8c3a62a7fd1b36af5dc10e[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 14:58:57 2025 +0530
+
+    added src -> config
+
+[33mcommit e57460811a604927e4dc983faff108d776d0b545[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 12:45:10 2025 +0530
+
+    created scripts -> setup-db
+
+[33mcommit 317c58ad668a451ca18e5fb19dc9556d165f9c5f[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 01:58:27 2025 +0530
+
+    added files package-lock.json, readme, tsconfig.json
+
+[33mcommit 655c4f5a2b8a46d69ed1c83b1eafe6e28f290092[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 01:41:06 2025 +0530
+
+    created gitignore, package.json
+
+[33mcommit fbadfe2ec304b84862bb055d645d6e1cd6e8966d[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Fri Sep 19 01:30:16 2025 +0530
+
+    created .env.example
+
+[33mcommit 69525eed01fb22724db14bd2d27c2c7de9e9db03[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Thu Sep 18 14:45:32 2025 +0530
+
+    Update README.md
+    
+    Updated README.md
+
+[33mcommit df1c60cf9c6ffbd34e8e5c9238f10a0656164855[m
+Author: Vinit Sankhla <vinitsankhla2006@gmail.com>
+Date:   Thu Sep 18 14:27:38 2025 +0530
+
+    First commit: add project files
