@@ -1,4 +1,4 @@
-// HopOn - Main Application Logic
+// HopOn - Main Application Logic (API Integrated)
 
 class HopOnApp {
     constructor() {
@@ -7,65 +7,73 @@ class HopOnApp {
         this.locations = ['AB1', 'AB2', 'BOYS HOSTEL', 'GIRLS HOSTEL'];
         this.rideTimer = null;
         this.rideStartTime = null;
-        
+
         this.init();
     }
 
     // Initialize the application
-    init() {
-        this.checkAuthAndInit();
+    async init() {
+        await this.checkAuthAndInit();
         this.setupGlobalEventListeners();
-        this.loadUserData();
+        await this.loadUserData();
         console.log('🚀 HopOn App initialized');
     }
 
     // Check authentication and initialize appropriate page
-    checkAuthAndInit() {
-        this.currentUser = storage.getCurrentUser();
-        
+    async checkAuthAndInit() {
+        try {
+            this.currentUser = await storage.getCurrentUser();
+        } catch (error) {
+            this.currentUser = null;
+        }
+
         // If on login page and user is authenticated, redirect to dashboard
         if (this.isLoginPage() && this.currentUser) {
             window.location.href = 'pages/dashboard.html';
             return;
         }
-        
+
         // If on protected pages and not authenticated, redirect to login
         if (!this.isLoginPage() && !this.currentUser) {
-            window.location.href = '../index.html';
+            window.location.href = '../login.html';
             return;
         }
 
         // Initialize page-specific functionality
-        this.initializePage();
+        await this.initializePage();
     }
 
     // Check if current page is login page
     isLoginPage() {
-        return window.location.pathname.includes('index.html') || 
-               window.location.pathname === '/' || 
+        return window.location.pathname.includes('login.html') ||
+               window.location.pathname === '/' ||
                window.location.pathname.endsWith('/');
     }
 
     // Initialize page-specific functionality
-    initializePage() {
+    async initializePage() {
         const path = window.location.pathname;
-        
+
         if (path.includes('dashboard.html')) {
-            this.initializeDashboard();
+            await this.initializeDashboard();
         } else if (path.includes('booking.html')) {
-            this.initializeBooking();
+            await this.initializeBooking();
         } else if (path.includes('history.html')) {
-            this.initializeHistory();
+            await this.initializeHistory();
         }
     }
 
     // Load user data and check for active rides
-    loadUserData() {
+    async loadUserData() {
         if (this.currentUser) {
-            // Check for any active rides
-            this.currentRide = storage.getActiveRide(this.currentUser.id);
-            if (this.currentRide) {
-                console.log('🚴‍♂️ Active ride found:', this.currentRide);
+            try {
+                // Check for any active rides
+                this.currentRide = await storage.getActiveRide(this.currentUser.id);
+                if (this.currentRide) {
+                    console.log('🚴‍♂️ Active ride found:', this.currentRide);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
             }
         }
     }
@@ -93,16 +101,16 @@ class HopOnApp {
     }
 
     // Dashboard initialization
-    initializeDashboard() {
+    async initializeDashboard() {
         console.log('📊 Initializing Dashboard');
-        this.displayUserInfo();
-        this.displayRideHistory();
-        this.checkActiveRide();
+        await this.displayUserInfo();
+        await this.displayRideHistory();
+        await this.checkActiveRide();
         this.setupDashboardEvents();
     }
 
     // Display user information on dashboard
-    displayUserInfo() {
+    async displayUserInfo() {
         const userNameEl = document.getElementById('userName');
         const totalRidesEl = document.getElementById('totalRides');
         const welcomeMessageEl = document.getElementById('welcomeMessage');
@@ -115,56 +123,66 @@ class HopOnApp {
                 let greeting = 'Good morning';
                 if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
                 else if (hour >= 17) greeting = 'Good evening';
-                
+
                 welcomeMessageEl.textContent = `${greeting}, ${this.currentUser.name.split(' ')[0]}!`;
             }
         }
     }
 
     // Display recent ride history on dashboard
-    displayRideHistory() {
+    async displayRideHistory() {
         const historyContainer = document.getElementById('recentRides');
         if (!historyContainer) return;
 
-        const rides = storage.getUserRides(this.currentUser.id);
-        const recentRides = rides.slice(0, 3); // Show last 3 rides
+        try {
+            const rides = await storage.getUserRides(this.currentUser.id);
+            const recentRides = rides.slice(0, 3); // Show last 3 rides
 
-        if (recentRides.length === 0) {
+            if (recentRides.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="no-rides">
+                        <i class="fas fa-bicycle"></i>
+                        <p>No rides yet. Start your first HopOn adventure!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const ridesHTML = recentRides.map(ride => `
+                <div class="ride-item ${ride.status}">
+                    <div class="ride-info">
+                        <div class="ride-route">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${ride.startLocation}</span>
+                            <i class="fas fa-arrow-right"></i>
+                            <span>${ride.endLocation || 'In Progress'}</span>
+                        </div>
+                        <div class="ride-meta">
+                            <span class="ride-date">${this.formatDate(ride.startTime)}</span>
+                            <span class="ride-duration">${this.formatDuration(ride.actualDuration)}</span>
+                            <span class="ride-status badge ${ride.status}">${ride.status}</span>
+                        </div>
+                    </div>
+                    <div class="bike-info">
+                        <span class="bike-id">${ride.bikeId}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            historyContainer.innerHTML = ridesHTML;
+        } catch (error) {
+            console.error('Error displaying ride history:', error);
             historyContainer.innerHTML = `
                 <div class="no-rides">
-                    <i class="fas fa-bicycle"></i>
-                    <p>No rides yet. Start your first HopOn adventure!</p>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Unable to load ride history</p>
                 </div>
             `;
-            return;
         }
-
-        const ridesHTML = recentRides.map(ride => `
-            <div class="ride-item ${ride.status}">
-                <div class="ride-info">
-                    <div class="ride-route">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${ride.startLocation}</span>
-                        <i class="fas fa-arrow-right"></i>
-                        <span>${ride.endLocation || 'In Progress'}</span>
-                    </div>
-                    <div class="ride-meta">
-                        <span class="ride-date">${this.formatDate(ride.startTime)}</span>
-                        <span class="ride-duration">${this.formatDuration(ride.actualDuration)}</span>
-                        <span class="ride-status badge ${ride.status}">${ride.status}</span>
-                    </div>
-                </div>
-                <div class="bike-info">
-                    <span class="bike-id">${ride.bikeId}</span>
-                </div>
-            </div>
-        `).join('');
-
-        historyContainer.innerHTML = ridesHTML;
     }
 
     // Check for active ride and display timer
-    checkActiveRide() {
+    async checkActiveRide() {
         if (this.currentRide) {
             this.showActiveRideUI();
             this.startRideTimer();
@@ -177,12 +195,12 @@ class HopOnApp {
     showActiveRideUI() {
         const activeRideSection = document.getElementById('activeRide');
         const startRideBtn = document.getElementById('startRideBtn');
-        
+
         if (activeRideSection) {
             activeRideSection.style.display = 'block';
             this.updateActiveRideDisplay();
         }
-        
+
         if (startRideBtn) {
             startRideBtn.style.display = 'none';
         }
@@ -192,11 +210,11 @@ class HopOnApp {
     hideActiveRideUI() {
         const activeRideSection = document.getElementById('activeRide');
         const startRideBtn = document.getElementById('startRideBtn');
-        
+
         if (activeRideSection) {
             activeRideSection.style.display = 'none';
         }
-        
+
         if (startRideBtn) {
             startRideBtn.style.display = 'block';
         }
@@ -224,17 +242,17 @@ class HopOnApp {
     // Start ride timer
     startRideTimer() {
         if (this.rideTimer) clearInterval(this.rideTimer);
-        
+
         const startTime = new Date(this.currentRide.startTime);
         const timerDuration = this.currentRide.timerDuration * 60 * 1000; // Convert to milliseconds
-        
+
         this.rideTimer = setInterval(() => {
             const now = new Date();
             const elapsed = now - startTime;
             const remaining = Math.max(0, timerDuration - elapsed);
-            
+
             this.updateTimerDisplay(remaining);
-            
+
             // Auto-end ride when timer expires
             if (remaining <= 0) {
                 this.autoEndRide();
@@ -249,10 +267,10 @@ class HopOnApp {
 
         const minutes = Math.floor(remainingMs / (1000 * 60));
         const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-        
+
         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         timerEl.textContent = timeString;
-        
+
         // Change color when time is running low
         if (remainingMs < 2 * 60 * 1000) { // Less than 2 minutes
             timerEl.classList.add('warning');
@@ -262,16 +280,20 @@ class HopOnApp {
     }
 
     // Auto-end ride when timer expires
-    autoEndRide() {
+    async autoEndRide() {
         if (this.rideTimer) {
             clearInterval(this.rideTimer);
             this.rideTimer = null;
         }
 
-        // End the ride automatically
-        this.completeRide(this.currentRide.endLocation, null, 'Timer expired');
-        
-        this.showMessage('Your ride has ended automatically due to timer expiry!', 'warning');
+        try {
+            // End the ride automatically
+            await this.completeRide(this.currentRide.endLocation, null, 'Timer expired');
+            this.showMessage('Your ride has ended automatically due to timer expiry!', 'warning');
+        } catch (error) {
+            console.error('Error auto-ending ride:', error);
+            this.showMessage('Error ending ride automatically. Please end manually.', 'error');
+        }
     }
 
     // Setup dashboard event listeners
@@ -317,10 +339,10 @@ class HopOnApp {
             modal = this.createEndRideModal();
             document.body.appendChild(modal);
         }
-        
+
         // Populate destination options
         this.populateDestinationOptions();
-        
+
         // Show modal
         modal.classList.add('active');
     }
@@ -330,7 +352,7 @@ class HopOnApp {
         const modal = document.createElement('div');
         modal.id = 'endRideModal';
         modal.className = 'modal-overlay';
-        
+
         modal.innerHTML = `
             <div class="modal">
                 <div class="modal-header">
@@ -377,7 +399,7 @@ class HopOnApp {
             if (e.target.classList.contains('rating-star')) {
                 const rating = e.target.dataset.rating;
                 const stars = modal.querySelectorAll('.rating-star');
-                
+
                 stars.forEach((star, index) => {
                     if (index < rating) {
                         star.classList.add('active');
@@ -385,7 +407,7 @@ class HopOnApp {
                         star.classList.remove('active');
                     }
                 });
-                
+
                 document.getElementById('rideRating').value = rating;
             }
         });
@@ -400,7 +422,7 @@ class HopOnApp {
 
         // Clear existing options except first
         endLocationSelect.innerHTML = '<option value="">Select destination</option>';
-        
+
         // Add all locations except current start location
         this.locations.forEach(location => {
             if (location !== this.currentRide.startLocation) {
@@ -413,7 +435,7 @@ class HopOnApp {
     }
 
     // Submit end ride
-    submitEndRide() {
+    async submitEndRide() {
         const endLocation = document.getElementById('endLocation').value;
         const rating = document.getElementById('rideRating').value;
         const feedback = document.getElementById('rideFeedback').value.trim();
@@ -423,44 +445,59 @@ class HopOnApp {
             return;
         }
 
-        // Close modal
-        document.getElementById('endRideModal').classList.remove('active');
-        
-        // Complete the ride
-        this.completeRide(endLocation, rating || null, feedback || null);
+        // Show loading
+        this.showLoading(true);
+
+        try {
+            // Close modal
+            document.getElementById('endRideModal').classList.remove('active');
+
+            // Complete the ride
+            await this.completeRide(endLocation, rating || null, feedback || null);
+        } catch (error) {
+            console.error('Error submitting end ride:', error);
+            this.showMessage('Failed to end ride. Please try again.', 'error');
+        } finally {
+            this.showLoading(false);
+        }
     }
 
     // Complete ride
-    completeRide(endLocation, rating, feedback) {
+    async completeRide(endLocation, rating, feedback) {
         if (!this.currentRide) return;
 
-        const result = storage.completeRide(this.currentRide.id, endLocation, rating, feedback);
-        
-        if (result.success) {
-            this.showMessage('Ride completed successfully!', 'success');
-            
-            // Clear current ride
-            this.currentRide = null;
-            if (this.rideTimer) {
-                clearInterval(this.rideTimer);
-                this.rideTimer = null;
+        try {
+            const result = await storage.completeRide(this.currentRide.id, endLocation, rating, feedback);
+
+            if (result.success) {
+                this.showMessage('Ride completed successfully!', 'success');
+
+                // Clear current ride
+                this.currentRide = null;
+                if (this.rideTimer) {
+                    clearInterval(this.rideTimer);
+                    this.rideTimer = null;
+                }
+
+                // Refresh dashboard
+                await this.checkActiveRide();
+                await this.displayRideHistory();
+                await this.displayUserInfo();
+            } else {
+                this.showMessage('Failed to complete ride. Please try again.', 'error');
             }
-            
-            // Refresh dashboard
-            this.checkActiveRide();
-            this.displayRideHistory();
-            this.displayUserInfo();
-        } else {
+        } catch (error) {
+            console.error('Error completing ride:', error);
             this.showMessage('Failed to complete ride. Please try again.', 'error');
         }
     }
 
     // Handle logout
-    handleLogout() {
+    async handleLogout() {
         if (this.currentRide) {
             if (confirm('You have an active ride. Are you sure you want to logout?')) {
                 // Auto-end the current ride
-                this.autoEndRide();
+                await this.autoEndRide();
             } else {
                 return;
             }
@@ -469,13 +506,13 @@ class HopOnApp {
         storage.logout();
         this.showMessage('Logged out successfully', 'info');
         setTimeout(() => {
-            window.location.href = '../index.html';
+            window.location.href = '../login.html';
         }, 1000);
     }
 
     // Handle navigation
-    handleNavigation() {
-        this.checkAuthAndInit();
+    async handleNavigation() {
+        await this.checkAuthAndInit();
     }
 
     // Handle visibility change
@@ -511,7 +548,7 @@ class HopOnApp {
         if (diffMins < 60) return `${diffMins}m ago`;
         if (diffHours < 24) return `${diffHours}h ago`;
         if (diffDays < 7) return `${diffDays}d ago`;
-        
+
         return date.toLocaleDateString();
     }
 
@@ -532,14 +569,33 @@ class HopOnApp {
             alert(message);
         }
     }
+
+    showLoading(show) {
+        const loading = document.getElementById('loading');
+        if (loading) {
+            if (show) {
+                loading.classList.add('active');
+            } else {
+                loading.classList.remove('active');
+            }
+        }
+    }
 }
 
 // Initialize app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Only initialize if not on login page or if storage/auth are loaded
-    if (typeof storage !== 'undefined') {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Only initialize if storage/api are loaded
+    if (typeof storage !== 'undefined' && typeof api !== 'undefined') {
         window.app = new HopOnApp();
     } else {
-        console.warn('Storage system not loaded. App initialization delayed.');
+        console.warn('Storage or API system not loaded. App initialization delayed.');
+        // Retry after a short delay
+        setTimeout(() => {
+            if (typeof storage !== 'undefined' && typeof api !== 'undefined') {
+                window.app = new HopOnApp();
+            } else {
+                console.error('Unable to initialize app: Storage or API not available');
+            }
+        }, 1000);
     }
 });

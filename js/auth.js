@@ -1,13 +1,26 @@
-// HopOn - Authentication System
+// HopOn - Authentication System with API Integration
 
 class AuthManager {
     constructor() {
-        this.initializeEventListeners();
-        this.checkAuthStatus();
+        this.loadingStates = {
+            login: false,
+            register: false,
+            validation: false
+        };
+
+        this.init();
+    }
+
+    // Initialize authentication system
+    async init() {
+        await this.checkAuthStatus();
+        this.setupEventListeners();
+        this.initializeValidation();
+        console.log('🔐 HopOn Authentication System initialized');
     }
 
     // Initialize all event listeners for auth forms
-    initializeEventListeners() {
+    setupEventListeners() {
         // Login form submission
         const loginForm = document.getElementById('login-form');
         if (loginForm) {
@@ -25,18 +38,23 @@ class AuthManager {
     }
 
     // Check if user is already logged in
-    checkAuthStatus() {
-        const currentUser = storage.getCurrentUser();
-        if (currentUser && window.location.pathname.includes('index.html')) {
-            // User is logged in but on login page, redirect to dashboard
-            this.redirectToDashboard();
+    async checkAuthStatus() {
+        try {
+            const response = await api.getCurrentUser();
+            if (response.success && window.location.pathname.includes('login.html')) {
+                // User is logged in but on login page, redirect to dashboard
+                this.redirectToDashboard();
+            }
+        } catch (error) {
+            // User not authenticated or token invalid, stay on login page
+            console.log('User not authenticated');
         }
     }
 
     // Handle login form submission
     async handleLogin(event) {
         event.preventDefault();
-        
+
         const loginId = document.getElementById('loginId').value.trim();
         const password = document.getElementById('loginPassword').value;
 
@@ -50,16 +68,13 @@ class AuthManager {
             return;
         }
 
-        // Simulate API delay for better UX
-        await this.delay(800);
-
         try {
-            // Authenticate user
-            const result = storage.authenticateUser(loginId, password);
-            
+            // Authenticate user via API
+            const result = await api.login({ loginId, password });
+
             if (result.success) {
                 this.showMessage('Login successful! Redirecting...', 'success');
-                
+
                 // Redirect after short delay
                 setTimeout(() => {
                     this.redirectToDashboard();
@@ -78,7 +93,7 @@ class AuthManager {
     // Handle register form submission
     async handleRegister(event) {
         event.preventDefault();
-        
+
         const formData = {
             name: document.getElementById('registerName').value.trim(),
             loginId: document.getElementById('registerLoginId').value.trim(),
@@ -93,17 +108,15 @@ class AuthManager {
         this.clearMessages();
 
         // Validate inputs
-        if (!this.validateRegisterForm(formData)) {
+        const isValid = await this.validateRegisterForm(formData);
+        if (!isValid) {
             this.showLoading(false);
             return;
         }
 
-        // Simulate API delay
-        await this.delay(1000);
-
         try {
-            // Create user account
-            const result = storage.createUser({
+            // Create user account via API
+            const result = await api.register({
                 name: formData.name,
                 loginId: formData.loginId,
                 email: formData.email,
@@ -112,21 +125,20 @@ class AuthManager {
             });
 
             if (result.success) {
-                this.showMessage('Account created successfully! Redirecting...', 'success');
-                
-                // Auto-login the user
-                storage.setCurrentUser(result.user);
-                
-                // Redirect after short delay
+                this.showMessage('Account created successfully! Please login to continue.', 'success');
+
+                // Show login form after short delay
                 setTimeout(() => {
-                    this.redirectToDashboard();
+                    showLogin();
+                    // Pre-fill login ID
+                    document.getElementById('loginId').value = formData.loginId;
                 }, 1500);
             } else {
                 this.showMessage(result.message || 'Failed to create account', 'error');
             }
         } catch (error) {
             console.error('Registration error:', error);
-            this.showMessage('Something went wrong. Please try again.', 'error');
+            this.showMessage(error.message || 'Something went wrong. Please try again.', 'error');
         }
 
         this.showLoading(false);
@@ -161,7 +173,7 @@ class AuthManager {
     }
 
     // Validate registration form
-    validateRegisterForm(data) {
+    async validateRegisterForm(data) {
         let isValid = true;
         this.clearFieldErrors();
 
@@ -184,9 +196,17 @@ class AuthManager {
         } else if (!/^[a-zA-Z0-9_]+$/.test(data.loginId)) {
             this.showFieldError('registerLoginId', 'Login ID can only contain letters, numbers and underscore');
             isValid = false;
-        } else if (!storage.isLoginIdAvailable(data.loginId)) {
-            this.showFieldError('registerLoginId', 'This Login ID is already taken');
-            isValid = false;
+        } else {
+            // Check availability via API
+            try {
+                const response = await api.checkLoginIdAvailability(data.loginId);
+                if (!response.available) {
+                    this.showFieldError('registerLoginId', 'This Login ID is already taken');
+                    isValid = false;
+                }
+            } catch (error) {
+                console.error('Login ID check error:', error);
+            }
         }
 
         // Validate email
@@ -196,9 +216,17 @@ class AuthManager {
         } else if (!this.isValidEmail(data.email)) {
             this.showFieldError('registerEmail', 'Please enter a valid email address');
             isValid = false;
-        } else if (!storage.isEmailAvailable(data.email)) {
-            this.showFieldError('registerEmail', 'This email is already registered');
-            isValid = false;
+        } else {
+            // Check availability via API
+            try {
+                const response = await api.checkEmailAvailability(data.email);
+                if (!response.available) {
+                    this.showFieldError('registerEmail', 'This email is already registered');
+                    isValid = false;
+                }
+            } catch (error) {
+                console.error('Email check error:', error);
+            }
         }
 
         // Validate phone
@@ -236,28 +264,43 @@ class AuthManager {
         // Login ID availability check for registration
         const registerLoginId = document.getElementById('registerLoginId');
         if (registerLoginId) {
-            registerLoginId.addEventListener('blur', () => {
-                const value = registerLoginId.value.trim();
-                if (value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value)) {
-                    if (storage.isLoginIdAvailable(value)) {
-                        this.showFieldSuccess('registerLoginId');
-                    } else {
-                        this.showFieldError('registerLoginId', 'This Login ID is already taken');
+            let debounceTimer;
+            registerLoginId.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(async () => {
+                    const value = registerLoginId.value.trim();
+                    if (value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value)) {
+                        try {
+                            const response = await api.checkLoginIdAvailability(value);
+                            if (response.available) {
+                                this.showFieldSuccess('registerLoginId');
+                            } else {
+                                this.showFieldError('registerLoginId', 'This Login ID is already taken');
+                            }
+                        } catch (error) {
+                            console.error('Login ID check error:', error);
+                        }
                     }
-                }
+                }, 500);
             });
         }
 
         // Email availability check
         const registerEmail = document.getElementById('registerEmail');
         if (registerEmail) {
-            registerEmail.addEventListener('blur', () => {
+            let debounceTimer;
+            registerEmail.addEventListener('blur', async () => {
                 const value = registerEmail.value.trim();
                 if (this.isValidEmail(value)) {
-                    if (storage.isEmailAvailable(value)) {
-                        this.showFieldSuccess('registerEmail');
-                    } else {
-                        this.showFieldError('registerEmail', 'This email is already registered');
+                    try {
+                        const response = await api.checkEmailAvailability(value);
+                        if (response.available) {
+                            this.showFieldSuccess('registerEmail');
+                        } else {
+                            this.showFieldError('registerEmail', 'This email is already registered');
+                        }
+                    } catch (error) {
+                        console.error('Email check error:', error);
                     }
                 }
             });
@@ -309,7 +352,7 @@ class AuthManager {
 
         const messageElement = document.createElement('div');
         messageElement.className = `message ${type}`;
-        
+
         const icon = this.getMessageIcon(type);
         messageElement.innerHTML = `
             <i class="${icon}"></i>
@@ -385,7 +428,7 @@ class AuthManager {
 
         const inputGroup = field.closest('.input-group');
         let strengthIndicator = inputGroup.querySelector('.password-strength');
-        
+
         if (!strengthIndicator) {
             strengthIndicator = document.createElement('div');
             strengthIndicator.className = 'password-strength';
@@ -423,20 +466,16 @@ class AuthManager {
         }
     }
 
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     redirectToDashboard() {
         window.location.href = 'pages/dashboard.html';
     }
 
     // Logout function
     logout() {
-        storage.logout();
+        api.logout();
         this.showMessage('Logged out successfully', 'info');
         setTimeout(() => {
-            window.location.href = '../index.html';
+            window.location.href = '../login.html';
         }, 1000);
     }
 }
@@ -445,7 +484,7 @@ class AuthManager {
 function showRegister() {
     document.getElementById('loginForm').classList.remove('active');
     document.getElementById('registerForm').classList.add('active');
-    
+
     // Clear any existing errors
     if (window.auth) {
         window.auth.clearFieldErrors();
@@ -456,7 +495,7 @@ function showRegister() {
 function showLogin() {
     document.getElementById('registerForm').classList.remove('active');
     document.getElementById('loginForm').classList.add('active');
-    
+
     // Clear any existing errors
     if (window.auth) {
         window.auth.clearFieldErrors();
@@ -468,7 +507,7 @@ function showLogin() {
 function togglePassword(fieldId) {
     const field = document.getElementById(fieldId);
     const icon = field.parentNode.querySelector('.toggle-password');
-    
+
     if (field.type === 'password') {
         field.type = 'text';
         icon.classList.remove('fa-eye');
@@ -482,6 +521,10 @@ function togglePassword(fieldId) {
 
 // Initialize auth manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.auth = new AuthManager();
-    console.log('🔐 HopOn Authentication System initialized');
+    // Ensure API service is loaded before initializing auth
+    if (typeof api !== 'undefined') {
+        window.auth = new AuthManager();
+    } else {
+        console.error('API service not loaded. Please include api.js before auth.js');
+    }
 });
