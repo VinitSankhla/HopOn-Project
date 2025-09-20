@@ -22,10 +22,10 @@
     <style>
       /* Design System Variables */
       :root {
-        /* Colors - Clean Modern Palette */
-        --primary-blue: #2563eb;
-        --primary-blue-light: #3b82f6;
-        --primary-blue-dark: #1d4ed8;
+        /* Colors - Purple Theme to match login page */
+        --primary-purple: #667eea;
+        --primary-purple-light: #764ba2;
+        --primary-purple-dark: #5a67d8;
 
         --secondary-green: #059669;
         --secondary-green-light: #10b981;
@@ -151,7 +151,7 @@
         gap: var(--space-3);
         font-size: var(--font-size-xl);
         font-weight: 800;
-        color: var(--primary-blue);
+        color: var(--primary-purple);
         text-decoration: none;
         transition: all var(--transition-fast);
       }
@@ -178,17 +178,17 @@
       }
 
       .nav-menu a:hover {
-        color: var(--primary-blue);
+        color: var(--primary-purple);
         background: var(--neutral-100);
       }
 
       .nav-menu a.active {
-        color: var(--primary-blue);
+        color: var(--primary-purple);
         background: var(--neutral-100);
       }
 
       .cta-btn {
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         color: var(--white);
         padding: var(--space-3) var(--space-6);
         border: none;
@@ -204,7 +204,7 @@
       }
 
       .cta-btn:hover {
-        background: var(--primary-blue-dark);
+        background: var(--primary-purple-dark);
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
       }
@@ -223,9 +223,10 @@
         min-height: 100vh;
         display: flex;
         align-items: center;
-        background: var(--neutral-50);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         position: relative;
         padding: var(--space-24) 0 var(--space-16);
+        color: white;
       }
 
       .hero::before {
@@ -235,16 +236,6 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: radial-gradient(
-            circle at 25% 25%,
-            var(--neutral-100) 2px,
-            transparent 2px
-          ),
-          radial-gradient(
-            circle at 75% 75%,
-            var(--neutral-100) 2px,
-            transparent 2px
-          );
         background-size: 60px 60px;
         background-position: 0 0, 30px 30px;
         opacity: 0.5;
@@ -295,13 +286,13 @@
       .hero-content h1 {
         font-size: var(--font-size-6xl);
         font-weight: 800;
-        color: var(--neutral-900);
+        color: var(--white);
         margin-bottom: var(--space-6);
         line-height: 1.1;
       }
 
       .hero-content h1 .highlight {
-        color: var(--primary-blue);
+        color: var(--accent-orange);
         position: relative;
       }
 
@@ -318,7 +309,7 @@
 
       .hero-content p {
         font-size: var(--font-size-xl);
-        color: var(--neutral-600);
+        color: rgba(255, 255, 255, 0.9);
         margin-bottom: var(--space-8);
         line-height: 1.7;
       }
@@ -330,7 +321,7 @@
       }
 
       .btn-primary {
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         color: var(--white);
         padding: var(--space-4) var(--space-8);
         border: none;
@@ -346,7 +337,7 @@
       }
 
       .btn-primary:hover {
-        background: var(--primary-blue-dark);
+        background: var(--primary-purple-dark);
         transform: translateY(-3px);
         box-shadow: var(--shadow-xl);
       }
@@ -368,8 +359,8 @@
 
       .btn-secondary:hover {
         background: var(--neutral-50);
-        border-color: var(--primary-blue);
-        color: var(--primary-blue);
+        border-color: var(--primary-purple);
+        color: var(--primary-purple);
         transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
       }
@@ -387,14 +378,14 @@
       .stat-number {
         font-size: var(--font-size-4xl);
         font-weight: 800;
-        color: var(--primary-blue);
+        color: var(--white);
         display: block;
         margin-bottom: var(--space-1);
       }
 
       .stat-label {
         font-size: var(--font-size-sm);
-        color: var(--neutral-500);
+        color: rgba(255, 255, 255, 0.8);
         font-weight: 500;
       }
 
@@ -497,7 +488,7 @@
 
       .section-badge {
         display: inline-block;
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         color: var(--white);
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-full);
@@ -543,7 +534,7 @@
       .feature-card:hover {
         transform: translateY(-8px);
         box-shadow: var(--shadow-2xl);
-        border-color: var(--primary-blue);
+        border-color: var(--primary-purple);
       }
 
       .feature-card::before {
@@ -553,7 +544,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         transform: scaleX(0);
         transition: transform var(--transition-normal);
       }
@@ -576,7 +567,7 @@
       }
 
       .feature-card:hover .feature-icon {
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         color: var(--white);
         transform: rotate(10deg) scale(1.1);
       }
@@ -594,19 +585,6 @@
         margin-bottom: var(--space-6);
       }
 
-      .feature-link {
-        color: var(--primary-blue);
-        font-weight: 600;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: var(--space-2);
-        transition: all var(--transition-fast);
-      }
-
-      .feature-link:hover {
-        gap: var(--space-3);
-      }
 
       /* How It Works Section */
       .how-it-works {
@@ -644,7 +622,7 @@
         transform: translateX(-50%);
         width: 60px;
         height: 60px;
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -740,7 +718,7 @@
 
       .demo-feature-icon {
         font-size: var(--font-size-2xl);
-        color: var(--primary-blue);
+        color: var(--primary-purple);
         margin-bottom: var(--space-3);
       }
 
@@ -756,53 +734,6 @@
         color: var(--neutral-600);
       }
 
-      /* Stats Section */
-      .stats {
-        padding: var(--space-20) 0;
-        background: var(--primary-blue);
-        color: var(--white);
-      }
-
-      .stats-container {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 0 var(--space-6);
-      }
-
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--space-12);
-        text-align: center;
-      }
-
-      .stats-item {
-        padding: var(--space-6);
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: var(--radius-xl);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all var(--transition-normal);
-      }
-
-      .stats-item:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.15);
-      }
-
-      .stats-number {
-        font-size: var(--font-size-4xl);
-        font-weight: 800;
-        display: block;
-        margin-bottom: var(--space-2);
-        color: var(--white);
-      }
-
-      .stats-label {
-        font-size: var(--font-size-base);
-        opacity: 0.9;
-        font-weight: 500;
-      }
 
       /* Testimonials Section */
       .testimonials {
@@ -849,7 +780,7 @@
       .author-avatar {
         width: 48px;
         height: 48px;
-        background: var(--primary-blue);
+        background: var(--primary-purple);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
@@ -913,7 +844,7 @@
       }
 
       .faq-question:hover {
-        color: var(--primary-blue);
+        color: var(--primary-purple);
       }
 
       .faq-icon {
@@ -943,7 +874,7 @@
       /* CTA Section */
       .cta-section {
         padding: var(--space-24) 0;
-        background: var(--primary-blue);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: var(--white);
         text-align: center;
       }
@@ -976,7 +907,7 @@
 
       .btn-cta-primary {
         background: var(--white);
-        color: var(--primary-blue);
+        color: var(--primary-purple);
         padding: var(--space-5) var(--space-10);
         border: none;
         border-radius: var(--radius-lg);
@@ -1012,14 +943,15 @@
 
       .btn-cta-secondary:hover {
         background: var(--white);
-        color: var(--primary-blue);
+        color: var(--primary-purple);
         transform: translateY(-3px);
       }
 
       .cta-features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: var(--space-6);
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--space-8);
         margin-top: var(--space-12);
       }
 
@@ -1038,6 +970,7 @@
       .cta-feature-text {
         font-weight: 500;
         opacity: 0.9;
+        white-space: nowrap;
       }
 
       /* Footer */
@@ -1085,13 +1018,13 @@
       }
 
       .footer-section a:hover {
-        color: var(--primary-blue-light);
+        color: var(--primary-purple-light);
       }
 
       .footer-logo {
         font-size: var(--font-size-2xl);
         font-weight: 800;
-        color: var(--primary-blue-light);
+        color: var(--primary-purple);
         margin-bottom: var(--space-4);
       }
 
@@ -1099,53 +1032,13 @@
         margin-bottom: var(--space-6);
       }
 
-      .social-links {
-        display: flex;
-        gap: var(--space-4);
-      }
-
-      .social-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        background: var(--neutral-800);
-        border-radius: var(--radius-lg);
-        color: var(--neutral-400);
-        text-decoration: none;
-        transition: all var(--transition-fast);
-      }
-
-      .social-link:hover {
-        background: var(--primary-blue);
-        color: var(--white);
-        transform: translateY(-2px);
-      }
 
       .footer-bottom {
         border-top: 1px solid var(--neutral-800);
         padding-top: var(--space-8);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        text-align: center;
         color: var(--neutral-500);
         font-size: var(--font-size-sm);
-      }
-
-      .footer-links {
-        display: flex;
-        gap: var(--space-6);
-      }
-
-      .footer-links a {
-        color: var(--neutral-500);
-        text-decoration: none;
-        transition: color var(--transition-fast);
-      }
-
-      .footer-links a:hover {
-        color: var(--primary-blue-light);
       }
 
       /* Animations */
@@ -1210,6 +1103,60 @@
         }
         100% {
           transform: rotate(360deg);
+        }
+      }
+
+      /* Floating Action Button - Scroll to Top */
+      .scroll-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: var(--radius-full);
+        color: var(--white);
+        font-size: var(--font-size-lg);
+        cursor: pointer;
+        box-shadow: var(--shadow-xl);
+        z-index: 999;
+        transition: all var(--transition-normal);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .scroll-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+      }
+
+      .scroll-to-top:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: var(--shadow-2xl);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      }
+
+      .scroll-to-top:active {
+        transform: translateY(-1px) scale(0.98);
+      }
+
+      /* Add a subtle pulse animation */
+      .scroll-to-top.visible {
+        animation: fabPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes fabPulse {
+        0%, 100% {
+          box-shadow: var(--shadow-xl);
+        }
+        50% {
+          box-shadow: var(--shadow-xl), 0 0 0 8px rgba(102, 126, 234, 0.2);
         }
       }
 
@@ -1280,6 +1227,20 @@
           flex-direction: column;
           align-items: center;
         }
+
+        .cta-features {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-4);
+        }
+
+        .scroll-to-top {
+          bottom: 20px;
+          right: 20px;
+          width: 48px;
+          height: 48px;
+          font-size: var(--font-size-base);
+        }
       }
 
       @media (max-width: 480px) {
@@ -1331,7 +1292,7 @@
         <div class="hero-content">
           <div class="hero-badge">
             <i class="fas fa-star"></i>
-            Campus Innovation Award 2024
+            Start your ride today
           </div>
           <h1>
             Smart Campus <span class="highlight">Mobility</span> for the Digital
@@ -1358,15 +1319,15 @@
           <div class="hero-stats">
             <div class="stat-item">
               <span class="stat-number">25+</span>
-              <span class="stat-label">Smart Bikes</span>
+              <span class="stat-label">Bikes Available</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">4</span>
               <span class="stat-label">Key Locations</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">24/7</span>
-              <span class="stat-label">Availability</span>
+              <span class="stat-number">7 days</span>
+              <span class="stat-label">Available in a week</span>
             </div>
           </div>
         </div>
@@ -1379,8 +1340,8 @@
               <div class="card-text">Lightning Fast</div>
             </div>
             <div class="floating-card floating-card-2">
-              <div class="card-icon">📱</div>
-              <div class="card-text">Mobile First</div>
+              <div class="card-icon">📆</div>
+              <div class="card-text">Tracks Everything</div>
             </div>
             <div class="floating-card floating-card-3">
               <div class="card-icon">🎯</div>
@@ -1413,9 +1374,6 @@
               process. No queues, no delays – just grab and go whenever you need
               to get somewhere fast.
             </p>
-            <a href="#" class="feature-link"
-              >Learn more <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1426,9 +1384,6 @@
               works perfectly whether you're planning ahead or booking on-the-go
               between classes.
             </p>
-            <a href="#" class="feature-link"
-              >See interface <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1439,9 +1394,6 @@
               Hostel – ensuring there's always a bike available where and when
               you need it most.
             </p>
-            <a href="#" class="feature-link"
-              >View map <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1452,9 +1404,6 @@
               for quick trips to the canteen or longer campus exploration
               sessions.
             </p>
-            <a href="#" class="feature-link"
-              >Set duration <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1465,22 +1414,16 @@
               campus mobility patterns. Get insights into your daily routines
               and optimize your time.
             </p>
-            <a href="#" class="feature-link"
-              >View stats <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
             <div class="feature-icon">🎉</div>
-            <h3>Completely Free</h3>
+            <h3>Completely Free Initially</h3>
             <p>
               Zero subscription fees, no hidden costs, no deposits required.
               Education should be accessible, and so should getting to it. Just
               ride and enjoy.
             </p>
-            <a href="#" class="feature-link"
-              >Start free <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1491,9 +1434,6 @@
               user authentication, and 24/7 support to ensure your safety on
               every ride.
             </p>
-            <a href="#" class="feature-link"
-              >Security info <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1504,9 +1444,6 @@
               contributes to a more sustainable campus environment and cleaner
               air for everyone.
             </p>
-            <a href="#" class="feature-link"
-              >Impact report <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
 
           <div class="feature-card fade-in">
@@ -1517,9 +1454,6 @@
               are designed around class schedules, hostel timings, and academic
               routines.
             </p>
-            <a href="#" class="feature-link"
-              >Our story <i class="fas fa-arrow-right"></i
-            ></a>
           </div>
         </div>
       </div>
@@ -1628,37 +1562,6 @@
       </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats">
-      <div class="stats-container">
-        <div class="stats-grid">
-          <div class="stats-item fade-in">
-            <span class="stats-number" data-target="500">0</span>
-            <span class="stats-label">Students Served</span>
-          </div>
-          <div class="stats-item fade-in">
-            <span class="stats-number" data-target="1250">0</span>
-            <span class="stats-label">Total Rides</span>
-          </div>
-          <div class="stats-item fade-in">
-            <span class="stats-number" data-target="98">0</span>
-            <span class="stats-label">% Satisfaction Rate</span>
-          </div>
-          <div class="stats-item fade-in">
-            <span class="stats-number" data-target="15">0</span>
-            <span class="stats-label">Avg. Ride Time (min)</span>
-          </div>
-          <div class="stats-item fade-in">
-            <span class="stats-number" data-target="24">0</span>
-            <span class="stats-label">Hours Available</span>
-          </div>
-          <div class="stats-item fade-in">
-            <span class="stats-number" data-target="0">0</span>
-            <span class="stats-label">Cost Per Ride (₹)</span>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Testimonials Section -->
     <section class="testimonials" id="testimonials">
@@ -1667,8 +1570,7 @@
           <div class="section-badge">Reviews</div>
           <h2 class="section-title">What Students Say</h2>
           <p class="section-subtitle">
-            Real feedback from students who have transformed their campus
-            experience with HopOn.
+            Real feedback from students who have faced problem during their campus travel.
           </p>
         </div>
 
@@ -1806,10 +1708,10 @@
           </button>
           <div class="faq-answer">
             <div class="faq-answer-content">
-              Yes! HopOn is completely free for all students. There are no
-              subscription fees, no hidden charges, no security deposits, and no
-              booking fees. We believe student mobility should be accessible to
-              everyone.
+              Yes! HopOn is completely free for all students initially. There are no
+              subscription fees for now, no hidden costs. 
+              The subscription model would be implemented further with prior knowledge.
+              We believe student mobility should be accessible to everyone.
             </div>
           </div>
         </div>
@@ -1850,7 +1752,7 @@
           <div class="faq-answer">
             <div class="faq-answer-content">
               If you encounter any issues with your bike, immediately end your
-              ride through the app and report the problem. Our maintenance team
+              ride through the app and return it to the nearest stand and report the problem. Our maintenance team
               will be notified instantly, and you won't be charged for the
               incomplete ride.
             </div>
@@ -1878,9 +1780,9 @@
           </button>
           <div class="faq-answer">
             <div class="faq-answer-content">
-              Each bike undergoes regular maintenance checks. Users can rate
-              bike condition after each ride, helping us identify bikes that
-              need attention. Our maintenance team performs daily inspections
+              Each bike undergoes regular maintenance checks. Users can give reviews, suggestions, complaints, 
+              helping us identify bikes that
+              need attention. Our maintenance team can perform checks
               and repairs.
             </div>
           </div>
@@ -1894,8 +1796,8 @@
           <div class="faq-answer">
             <div class="faq-answer-content">
               Yes! Our support team is available 24/7 via email
-              (support@hopon.com) and phone (+91-9876543210). We also have
-              campus representatives who can assist with immediate issues.
+              (vssankhla2006@gmail.com). We also have
+              dedicated form for complaints and suggestions.
             </div>
           </div>
         </div>
@@ -1907,8 +1809,8 @@
       <div class="cta-container">
         <h2 class="cta-title">Ready to Transform Your Campus Experience?</h2>
         <p class="cta-subtitle">
-          Join hundreds of students who have already discovered the easiest way
-          to navigate campus. Start your HopOn journey today and never be late
+          Don't be among the students struggling with campus distances, even when the perfect solution exist.
+          Start your HopOn journey today and never be late
           for class again.
         </p>
 
@@ -1917,7 +1819,7 @@
             <i class="fas fa-bicycle"></i>
             Start Riding Now
           </a>
-          <a href="pages/history.html" class="btn-cta-secondary">
+          <a href="#demo" class="btn-cta-secondary">
             <i class="fas fa-eye"></i>
             View Demo
           </a>
@@ -1926,7 +1828,7 @@
         <div class="cta-features">
           <div class="cta-feature">
             <i class="fas fa-check-circle cta-feature-icon"></i>
-            <span class="cta-feature-text">100% Free</span>
+            <span class="cta-feature-text">100% Free Initially</span>
           </div>
           <div class="cta-feature">
             <i class="fas fa-check-circle cta-feature-icon"></i>
@@ -1955,16 +1857,6 @@
               student-friendly bike sharing solutions. Built by students, for
               students.
             </p>
-            <div class="social-links">
-              <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-              <a href="#" class="social-link"
-                ><i class="fab fa-linkedin"></i
-              ></a>
-              <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-              <a href="#" class="social-link"
-                ><i class="fab fa-instagram"></i
-              ></a>
-            </div>
           </div>
 
           <div class="footer-section">
@@ -1973,7 +1865,7 @@
               <li><a href="login.html">Get Started</a></li>
               <li><a href="#features">Features</a></li>
               <li><a href="#how-it-works">How It Works</a></li>
-              <li><a href="pages/history.html">Demo</a></li>
+              <li><a href="#demo">Demo</a></li>
               <li><a href="#faq">FAQ</a></li>
             </ul>
           </div>
@@ -1983,20 +1875,19 @@
             <ul>
               <li>📍 Academic Block 1 (AB1)</li>
               <li>📍 Academic Block 2 (AB2)</li>
-              <li>📍 Boys Hostel Complex</li>
-              <li>📍 Girls Hostel Complex</li>
-              <li>📍 Central Library (Coming Soon)</li>
+              <li>📍 Boys Hostel </li>
+              <li>📍 Girls Hostel </li>
+              <li>📍 Open Auditorium (Coming Soon)</li>
             </ul>
           </div>
 
           <div class="footer-section">
             <h3>Support</h3>
             <ul>
-              <li>📧 support@hopon.com</li>
-              <li>📞 +91-9876543210</li>
-              <li>💬 Live Chat Available</li>
-              <li>🕒 24/7 Support</li>
-              <li>📋 Report an Issue</li>
+              <li>📧 vssankhla2006@gmail.com</li>              
+              <li>🕒 24/7 Support available</li>
+              <li>📋 Complaint form (login required)</li>
+              <li>💬 Live Chat (coming soon)</li>
             </ul>
           </div>
         </div>
@@ -2006,25 +1897,53 @@
             &copy; 2025 HopOn Campus Mobility. Built with ❤️ by students, for
             students.
           </p>
-          <div class="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Contact Us</a>
-          </div>
         </div>
       </div>
     </footer>
 
+    <!-- Floating Action Button - Scroll to Top -->
+    <button id="scrollToTopBtn" class="scroll-to-top" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up"></i>
+    </button>
+
     <!-- JavaScript -->
     <script>
-      // Header scroll effect
+      // Header scroll effect and FAB visibility
       window.addEventListener("scroll", () => {
         const header = document.getElementById("header");
-        if (window.scrollY > 100) {
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+        const scrollY = window.scrollY;
+
+        // Header scroll effect
+        if (scrollY > 100) {
           header.classList.add("scrolled");
         } else {
           header.classList.remove("scrolled");
         }
+
+        // Show/hide scroll to top button
+        if (scrollY > 300) {
+          scrollToTopBtn.classList.add("visible");
+        } else {
+          scrollToTopBtn.classList.remove("visible");
+        }
+      });
+
+      // Scroll to top functionality
+      document.getElementById("scrollToTopBtn").addEventListener("click", (e) => {
+        // Add click feedback
+        const btn = e.target.closest('.scroll-to-top');
+        btn.style.transform = 'translateY(-1px) scale(0.95)';
+
+        setTimeout(() => {
+          btn.style.transform = '';
+        }, 150);
+
+        // Smooth scroll to top
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
       });
 
       // Smooth scroll for navigation links
@@ -2082,45 +2001,6 @@
         });
       });
 
-      // Animated counter for statistics
-      const animateCounter = (element, target, duration = 2000) => {
-        const start = 0;
-        const increment = target / (duration / 16);
-        let current = start;
-
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= target) {
-            element.textContent = target;
-            clearInterval(timer);
-          } else {
-            element.textContent = Math.floor(current);
-          }
-        }, 16);
-      };
-
-      // Stats animation on scroll
-      const statsObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const statsNumbers =
-                entry.target.querySelectorAll(".stats-number");
-              statsNumbers.forEach((stat) => {
-                const target = parseInt(stat.getAttribute("data-target"));
-                animateCounter(stat, target, 2000);
-              });
-              statsObserver.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.5 }
-      );
-
-      const statsSection = document.querySelector(".stats");
-      if (statsSection) {
-        statsObserver.observe(statsSection);
-      }
 
       // Mobile menu functionality (for future enhancement)
       const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
@@ -2188,7 +2068,7 @@
       // Console branding
       console.log(
         "%cHopOn 🚴‍♂️",
-        "font-size: 24px; font-weight: bold; color: #2563eb;"
+        "font-size: 24px; font-weight: bold; color: #667eea;"
       );
       console.log(
         "%cBuilt with ❤️ by students, for students",
