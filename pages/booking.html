@@ -737,6 +737,24 @@
         }
       });
 
+      // Function to calculate actual bike usage from completed rides
+      async function getBikeUsageCount(bikeId) {
+        try {
+          // Get all completed rides from the system
+          const allRides = await bookingStorage.getRides();
+
+          // Filter completed rides for this specific bike
+          const bikeRides = allRides.filter(ride =>
+            ride.bikeId === bikeId && ride.status === 'completed'
+          );
+
+          return bikeRides.length;
+        } catch (error) {
+          console.error(`Error getting usage count for bike ${bikeId}:`, error);
+          return 0; // Return 0 as fallback
+        }
+      }
+
       async function updateBikeCounts() {
         const locations = ["AB1", "AB2", "BOYS HOSTEL", "GIRLS HOSTEL"];
         const elementIds = [
@@ -909,12 +927,24 @@
             return;
           }
 
-          availableBikes.forEach((bike) => {
+          // Show loading message while fetching usage data
+          bikesContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+              <div style="font-size: 24px; margin-bottom: 15px;">🔄</div>
+              <p>Loading bike usage data...</p>
+            </div>
+          `;
+
+          // Process each bike with actual usage data
+          for (const bike of availableBikes) {
             const card = document.createElement("div");
             card.className = "bike-card";
             card.dataset.bikeId = bike.id;
 
             const conditionClass = `condition-${bike.condition.toLowerCase()}`;
+
+            // Get actual usage count for this bike
+            const actualUsageCount = await getBikeUsageCount(bike.id);
 
             card.innerHTML = `
                       <div class="bike-header">
@@ -922,9 +952,7 @@
                           <div class="bike-condition ${conditionClass}">${bike.condition}</div>
                       </div>
                       <div class="bike-stats">
-                          <span>🚴‍♂️ ${bike.totalRides} rides</span>
-                          <span>⭐ ${bike.rating}</span>
-                          <span>🔋 ${bike.batteryLevel}%</span>
+                          <span>🚴‍♂️ ${actualUsageCount} rides completed</span>
                       </div>
                   `;
 
@@ -944,8 +972,13 @@
               console.log("Bike selected:", bike.id);
             });
 
+            // Clear loading message on first bike and add bikes progressively
+            if (bike === availableBikes[0]) {
+              bikesContainer.innerHTML = "";
+            }
+
             bikesContainer.appendChild(card);
-          });
+          }
         } catch (error) {
           console.error("Error loading available bikes:", error);
           bikesContainer.innerHTML = `

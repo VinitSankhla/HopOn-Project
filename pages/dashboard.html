@@ -353,22 +353,156 @@
             font-size: 14px;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-body p {
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+        }
+
+        .location-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .location-btn {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .location-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .location-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .location-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .location-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                margin: 15% auto;
+                width: 95%;
+            }
+
+            .location-options {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -546,7 +680,7 @@
                 <div class="stat-icon warning">📍</div>
                 <div class="stat-info">
                     <div class="stat-number" id="favLocationDisplay">AB1</div>
-                    <div class="stat-label">Favorite Location</div>
+                    <div class="stat-label">Favorite Start</div>
                 </div>
             </div>
             
@@ -563,6 +697,44 @@
     <!-- Footer -->
     <div class="footer">
         &copy; 2025 HopOn. Making campus mobility effortless.
+    </div>
+
+    <!-- End Ride Modal -->
+    <div id="endRideModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🛑 End Your Ride</h3>
+                <span class="close-btn" onclick="closeEndRideModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Where are you parking the bike?</p>
+                <div class="location-options">
+                    <button class="location-btn" onclick="selectEndLocation('AB1')">
+                        <div class="location-icon">🏢</div>
+                        <div class="location-name">AB1</div>
+                        <div class="location-desc">Academic Block 1</div>
+                    </button>
+                    <button class="location-btn" onclick="selectEndLocation('AB2')">
+                        <div class="location-icon">🏢</div>
+                        <div class="location-name">AB2</div>
+                        <div class="location-desc">Academic Block 2</div>
+                    </button>
+                    <button class="location-btn" onclick="selectEndLocation('BOYS HOSTEL')">
+                        <div class="location-icon">🏠</div>
+                        <div class="location-name">Boys Hostel</div>
+                        <div class="location-desc">Residential Area</div>
+                    </button>
+                    <button class="location-btn" onclick="selectEndLocation('GIRLS HOSTEL')">
+                        <div class="location-icon">🏠</div>
+                        <div class="location-name">Girls Hostel</div>
+                        <div class="location-desc">Residential Area</div>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEndRideModal()">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript Files -->
@@ -644,6 +816,16 @@
 
         // Stop updates when user leaves the page
         window.addEventListener('beforeunload', stopPeriodicUpdates);
+
+        // Add keyboard support for modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('endRideModal');
+                if (modal && modal.style.display === 'block') {
+                    closeEndRideModal();
+                }
+            }
+        });
 
         // Update user information display
         async function updateUserInfo(user) {
@@ -986,7 +1168,7 @@
 
         // Event handlers
         function showHelp() {
-            alert('❓ Help & Support\n\n📧 Email: support@hopon.com\n📞 Phone: +91-XXXX-XXXX-XX');
+            alert('❓ Help & Support\n\n📧 Email: vssankhla2006@gmail.com\nFill out the form for complaints and suggestions\nhttps://forms.gle/sM2SxSZFX8cLiGAw9');
         }
 
         async function logout() {
@@ -1003,35 +1185,149 @@
         }
 
         async function endRide() {
-            const user = await storage.getCurrentUser();
-            if (!user) return;
+            console.log('🛑 endRide function called');
 
-            const activeRide = await storage.getActiveRide(user.id);
-            if (!activeRide) {
-                showMessage('No active ride found.', 'warning');
+            try {
+                const user = await storage.getCurrentUser();
+                console.log('👤 Current user in endRide:', user);
+
+                if (!user) {
+                    console.error('❌ No user found in endRide');
+                    showMessage('Please login to end ride.', 'error');
+                    return;
+                }
+
+                const activeRide = await storage.getActiveRide(user.id);
+                console.log('🚴‍♂️ Active ride found:', activeRide);
+
+                if (!activeRide) {
+                    console.warn('⚠️ No active ride found for user:', user.id);
+                    showMessage('No active ride found.', 'warning');
+                    return;
+                }
+
+                // Store the active ride for use in modal
+                window.currentActiveRide = activeRide;
+                console.log('💾 Stored activeRide in window.currentActiveRide:', window.currentActiveRide);
+
+                // Show the location selection modal
+                showEndRideModal();
+
+            } catch (error) {
+                console.error('❌ Error in endRide function:', error);
+                showMessage('Error loading ride data. Please try again.', 'error');
+            }
+        }
+
+        // Modal functions for end ride
+        function showEndRideModal() {
+            const modal = document.getElementById('endRideModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Add event listener for clicking outside modal
+                modal.onclick = function(event) {
+                    if (event.target === modal) {
+                        closeEndRideModal();
+                    }
+                };
+            }
+        }
+
+        function closeEndRideModal() {
+            const modal = document.getElementById('endRideModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.onclick = null;
+                window.currentActiveRide = null;
+            }
+        }
+
+        async function selectEndLocation(location) {
+            console.log('🛑 selectEndLocation called with location:', location);
+            console.log('🛑 currentActiveRide:', window.currentActiveRide);
+
+            if (!window.currentActiveRide) {
+                console.error('❌ No active ride found in window.currentActiveRide');
+                showMessage('No active ride found.', 'error');
+                closeEndRideModal();
                 return;
             }
 
-            // Simple end ride - in production, you'd want a proper modal
-            const endLocation = prompt('Where are you parking the bike?\n\nOptions:\n- AB1\n- AB2\n- BOYS HOSTEL\n- GIRLS HOSTEL');
+            try {
+                // Show loading message first
+                showMessage('Ending ride...', 'info');
+                console.log('🔄 Starting ride completion process...');
 
-            if (endLocation && ['AB1', 'AB2', 'BOYS HOSTEL', 'GIRLS HOSTEL'].includes(endLocation.toUpperCase())) {
+                // Get current user
+                const user = await storage.getCurrentUser();
+                console.log('👤 Current user:', user);
+
+                if (!user) {
+                    throw new Error('User not authenticated');
+                }
+
+                // Test API connectivity first
                 try {
-                    await storage.completeRide(activeRide.id, endLocation.toUpperCase());
-                    showMessage('Ride completed successfully!', 'success');
+                    const healthCheck = await api.healthCheck();
+                    console.log('🏥 API health check:', healthCheck);
+                } catch (healthError) {
+                    console.warn('⚠️ API health check failed:', healthError);
+                }
 
-                    // Refresh dashboard
+                // Complete the ride with detailed logging
+                console.log('🚴‍♂️ Calling completeRide with:', {
+                    rideId: window.currentActiveRide.id,
+                    endLocation: location,
+                    userId: user.id
+                });
+
+                const result = await storage.completeRide(window.currentActiveRide.id, location);
+                console.log('✅ completeRide result:', result);
+
+                // Check if result indicates failure
+                if (result && result.success === false) {
+                    throw new Error(result.message || 'Failed to complete ride');
+                }
+
+                // If result is undefined or doesn't have success property, try to validate
+                if (!result || (result.success !== true && result.success !== false)) {
+                    console.warn('⚠️ Unexpected result format:', result);
+                    // Don't throw error, assume success if no explicit failure
+                }
+
+                // Verify the ride was actually completed
+                console.log('🔍 Verifying ride completion...');
+                const verifyActiveRide = await storage.getActiveRide(user.id);
+                console.log('🔍 Active ride after completion attempt:', verifyActiveRide);
+
+                if (verifyActiveRide && verifyActiveRide.id === window.currentActiveRide.id) {
+                    // Ride is still active, completion might have failed
+                    throw new Error('Ride completion verification failed - ride is still active');
+                }
+
+                // Close modal after successful completion
+                closeEndRideModal();
+
+                showMessage('Ride completed successfully!', 'success');
+                console.log('🎉 Ride completed successfully, refreshing dashboard...');
+
+                // Refresh dashboard immediately since completion is verified
+                try {
                     await checkActiveRide(user);
                     await updateUserStats(user);
                     await updateRecentRides(user);
                     await updateBikeStats();
                     await updateLocationBikeCounts();
-                } catch (error) {
-                    console.error('Error ending ride:', error);
-                    showMessage('Failed to end ride. Please try again.', 'error');
+                    console.log('✅ Dashboard refreshed after ride completion');
+                } catch (refreshError) {
+                    console.error('❌ Error refreshing dashboard:', refreshError);
+                    // Still show success since ride was completed
                 }
-            } else if (endLocation) {
-                showMessage('Please select a valid location.', 'error');
+
+            } catch (error) {
+                console.error('❌ Error ending ride:', error);
+                showMessage(`Failed to end ride: ${error.message}`, 'error');
+                // Don't close modal on error so user can try again
             }
         }
 
