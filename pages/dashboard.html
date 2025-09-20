@@ -432,7 +432,7 @@
                     <div style="margin: 15px 0;">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
                             <span style="color: #667eea;">🚴‍♂️</span>
-                            <span>25 Bikes Available</span>
+                            <span id="total-available-bikes">Loading...</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="color: #667eea;">⏰</span>
@@ -587,15 +587,63 @@
                 // Update user info
                 await updateUserInfo(user);
                 await updateUserStats(user);
+                await updateRecentRides(user);
                 await updateBikeStats();
+                await updateLocationBikeCounts();
                 await checkActiveRide(user);
 
                 console.log('✅ Dashboard initialized successfully');
+
+                // Start periodic updates for bike counts (every 30 seconds)
+                startPeriodicUpdates();
             } catch (error) {
                 console.error('❌ Dashboard initialization failed:', error);
                 showError('Failed to load dashboard. Please refresh the page.');
             }
         }
+
+        // Start periodic updates for real-time data
+        function startPeriodicUpdates() {
+            // Update bike counts every 30 seconds
+            window.bikeCountInterval = setInterval(async () => {
+                try {
+                    await updateLocationBikeCounts();
+                    console.log('🔄 Bike counts updated automatically');
+                } catch (error) {
+                    console.error('Error in periodic bike count update:', error);
+                }
+            }, 30000); // 30 seconds
+
+            // Update user stats every 2 minutes
+            window.statsInterval = setInterval(async () => {
+                try {
+                    const user = await storage.getCurrentUser();
+                    if (user) {
+                        await updateUserStats(user);
+                        await updateRecentRides(user);
+                        await updateBikeStats();
+                        console.log('📊 User stats updated automatically');
+                    }
+                } catch (error) {
+                    console.error('Error in periodic stats update:', error);
+                }
+            }, 120000); // 2 minutes
+        }
+
+        // Stop periodic updates (cleanup)
+        function stopPeriodicUpdates() {
+            if (window.bikeCountInterval) {
+                clearInterval(window.bikeCountInterval);
+                window.bikeCountInterval = null;
+            }
+            if (window.statsInterval) {
+                clearInterval(window.statsInterval);
+                window.statsInterval = null;
+            }
+        }
+
+        // Stop updates when user leaves the page
+        window.addEventListener('beforeunload', stopPeriodicUpdates);
 
         // Update user information display
         async function updateUserInfo(user) {
@@ -686,6 +734,118 @@
                 // Fallback values
                 const availableBikesEl = document.getElementById('availableBikes');
                 if (availableBikesEl) availableBikesEl.textContent = '25';
+            }
+        }
+
+        // Update recent rides display
+        async function updateRecentRides(user) {
+            try {
+                const rides = await storage.getUserRides(user.id);
+                const completedRides = rides.filter(ride => ride.status === 'completed')
+                    .sort((a, b) => new Date(b.endTime) - new Date(a.endTime))
+                    .slice(0, 2); // Get last 2 rides
+
+                const recentRidesContainer = document.getElementById('recentRides');
+                if (!recentRidesContainer) return;
+
+                if (completedRides.length === 0) {
+                    recentRidesContainer.innerHTML = `
+                        <div class="no-rides">
+                            <div style="font-size: 40px; margin-bottom: 10px;">🚴</div>
+                            <p>No rides yet. Start your first HopOn adventure!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Create HTML for recent rides
+                let ridesHtml = '';
+                completedRides.forEach(ride => {
+                    const startTime = new Date(ride.startTime);
+                    const endTime = new Date(ride.endTime);
+                    const duration = ride.timerDuration || Math.round((endTime - startTime) / (1000 * 60));
+                    const timeAgo = getTimeAgo(endTime);
+
+                    ridesHtml += `
+                        <div style="padding: 12px; margin-bottom: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: #333; margin-bottom: 4px;">
+                                        🚴‍♂️ ${ride.startLocation} → ${ride.endLocation}
+                                    </div>
+                                    <div style="font-size: 12px; color: #666;">
+                                        <span style="margin-right: 12px;">⏱️ ${duration}min</span>
+                                        <span style="margin-right: 12px;">🚲 ${ride.bikeId}</span>
+                                    </div>
+                                </div>
+                                <div style="font-size: 11px; color: #888; text-align: right;">
+                                    ${timeAgo}
+                                </div>
+                            </div>
+                            ${ride.rating ? `
+                                <div style="font-size: 12px; color: #667eea;">
+                                    ${'⭐'.repeat(ride.rating)} ${ride.rating}/5
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+                recentRidesContainer.innerHTML = ridesHtml;
+
+            } catch (error) {
+                console.error('Error updating recent rides:', error);
+                const recentRidesContainer = document.getElementById('recentRides');
+                if (recentRidesContainer) {
+                    recentRidesContainer.innerHTML = `
+                        <div class="no-rides">
+                            <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
+                            <p>Unable to load recent rides.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Update location bike counts
+        async function updateLocationBikeCounts() {
+            const locations = ['AB1', 'AB2', 'BOYS HOSTEL', 'GIRLS HOSTEL'];
+            const locationIds = ['ab1-bikes', 'ab2-bikes', 'boys-hostel-bikes', 'girls-hostel-bikes'];
+
+            try {
+                // Get bike counts for each location
+                for (let i = 0; i < locations.length; i++) {
+                    const location = locations[i];
+                    const elementId = locationIds[i];
+
+                    try {
+                        const response = await storage.getAvailableBikes(location);
+                        const bikeCount = Array.isArray(response) ? response.length : 0;
+
+                        const element = document.getElementById(elementId);
+                        if (element) {
+                            element.textContent = `${bikeCount} bikes`;
+                        }
+                    } catch (locationError) {
+                        console.error(`Error getting bikes for ${location}:`, locationError);
+                        // Keep existing content or set to 0 if element exists
+                        const element = document.getElementById(elementId);
+                        if (element && element.textContent.includes('25 bikes') && location !== 'AB1') {
+                            element.textContent = '0 bikes';
+                        }
+                    }
+                }
+
+                // Also update the main "available bikes" count in the Start Ride card
+                const totalStats = await storage.getStats();
+                const totalAvailable = totalStats.totalBikes - totalStats.activeRides;
+                const startRideAvailableEl = document.getElementById('total-available-bikes');
+                if (startRideAvailableEl) {
+                    startRideAvailableEl.textContent = `${totalAvailable} Bikes Available`;
+                }
+
+            } catch (error) {
+                console.error('Error updating location bike counts:', error);
             }
         }
 
@@ -797,6 +957,8 @@
                 const user = await storage.getCurrentUser();
                 await checkActiveRide(user);
                 await updateUserStats(user);
+                await updateRecentRides(user);
+                await updateLocationBikeCounts();
             } catch (error) {
                 console.error('Error auto-ending ride:', error);
                 showMessage('Error ending ride automatically. Please end manually.', 'error');
@@ -861,7 +1023,9 @@
                     // Refresh dashboard
                     await checkActiveRide(user);
                     await updateUserStats(user);
+                    await updateRecentRides(user);
                     await updateBikeStats();
+                    await updateLocationBikeCounts();
                 } catch (error) {
                     console.error('Error ending ride:', error);
                     showMessage('Failed to end ride. Please try again.', 'error');
@@ -880,8 +1044,22 @@
             window.location.href = 'history.html';
         }
 
-        function refreshData() {
-            window.location.reload();
+        async function refreshData() {
+            try {
+                const user = await storage.getCurrentUser();
+                if (user) {
+                    await updateUserStats(user);
+                    await updateRecentRides(user);
+                    await updateBikeStats();
+                    await updateLocationBikeCounts();
+                    await checkActiveRide(user);
+                    showMessage('Data refreshed successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                showMessage('Failed to refresh data. Reloading page...', 'warning');
+                setTimeout(() => window.location.reload(), 2000);
+            }
         }
 
         function getTimeAgo(date) {
