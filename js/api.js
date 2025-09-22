@@ -1,7 +1,7 @@
 // HopOn API Service Layer
 class APIService {
     constructor() {
-        this.baseURL = 'http://localhost:3002/api';
+        this.baseURL = 'http://3.109.139.186:3002/api';
         this.token = localStorage.getItem('hopOnToken');
     }
 
