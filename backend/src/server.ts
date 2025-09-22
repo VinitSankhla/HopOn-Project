@@ -21,10 +21,7 @@ app.use(cors({
   origin : ["https://main.d2v2y6uuqi1nje.amplifyapp.com/"]
 }));
 
-const options = {
-  key: fs.readFileSync('/etc/ssl/private/server.key'),
-  cert: fs.readFileSync('/etc/ssl/certs/server.crt')
-};
+
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
