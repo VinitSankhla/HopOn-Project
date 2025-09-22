@@ -60,6 +60,7 @@ export class AuthController {
 
     // Login user
     async login(req: Request, res: Response) {
+        console.log (req.body)
         try {
             const { email, password } = req.body;
 

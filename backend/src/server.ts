@@ -14,17 +14,18 @@ import rideRoutes from "./routes/rides";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors({
-  origin : ["https://main.d2v2y6uuqi1nje.amplifyapp.com/"]
+  origin: true,
+  credentials: true
 }));
 
 
 
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+// app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
