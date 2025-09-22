@@ -15,8 +15,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
-
+app.use(cors(
+  {
+    origin:['https://main.d2v2y6uuqi1nje.amplifyapp.com/']
+  }
+));
 app.use(express.json({ limit: "10mb" }));
 
 // Health check endpoint
