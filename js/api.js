@@ -1,7 +1,7 @@
 // HopOn API Service Layer
 class APIService {
     constructor() {
-        this.baseURL = 'http://3.109.139.186:3002/api';
+        this.baseURL = 'https://hop-on-project-8uw1kifgp-vinitsankhlas-projects.vercel.app/api';
         this.token = localStorage.getItem('hopOnToken');
     }
 
