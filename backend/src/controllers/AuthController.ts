@@ -10,17 +10,9 @@ export class AuthController {
     // Register new user
     async register(req: Request, res: Response) {
         try {
-            const { loginId, name, email, phone, password } = req.body;
+            const { name, email, phone, gender, password } = req.body;
 
-            // Check if user already exists
-            const existingUserByLoginId = await this.userRepository.findOne({ where: { loginId } });
-            if (existingUserByLoginId) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Login ID already exists"
-                });
-            }
-
+            // Check if user already exists by email
             const existingUserByEmail = await this.userRepository.findOne({ where: { email } });
             if (existingUserByEmail) {
                 return res.status(400).json({
@@ -35,10 +27,10 @@ export class AuthController {
             // Create new user
             const user = new User();
             user.id = User.generateUserId();
-            user.loginId = loginId;
             user.name = name;
             user.email = email;
             user.phone = phone;
+            user.gender = gender;
             user.password = hashedPassword;
             user.totalRides = 0;
             user.profile = {
@@ -69,10 +61,10 @@ export class AuthController {
     // Login user
     async login(req: Request, res: Response) {
         try {
-            const { loginId, password } = req.body;
+            const { email, password } = req.body;
 
-            // Find user by loginId
-            const user = await this.userRepository.findOne({ where: { loginId } });
+            // Find user by email
+            const user = await this.userRepository.findOne({ where: { email } });
             if (!user) {
                 return res.status(400).json({
                     success: false,
@@ -91,7 +83,7 @@ export class AuthController {
 
             // Generate JWT token
             const token = jwt.sign(
-                { userId: user.id, loginId: user.loginId },
+                { userId: user.id, email: user.email },
                 process.env.JWT_SECRET || "default_secret",
                 { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
             );
@@ -139,27 +131,6 @@ export class AuthController {
         }
     }
 
-    // Check if login ID is available
-    async checkLoginIdAvailability(req: Request, res: Response) {
-        try {
-            const { loginId } = req.params;
-
-            const user = await this.userRepository.findOne({ where: { loginId } });
-
-            res.json({
-                success: true,
-                available: !user
-            });
-
-        } catch (error) {
-            console.error("Check login ID availability error:", error);
-            res.status(500).json({
-                success: false,
-                message: "Internal server error"
-            });
-        }
-    }
-
     // Check if email is available
     async checkEmailAvailability(req: Request, res: Response) {
         try {
@@ -177,6 +148,57 @@ export class AuthController {
             res.status(500).json({
                 success: false,
                 message: "Internal server error"
+            });
+        }
+    }
+
+    // Delete all users (for development/testing only)
+    async deleteAllUsers(req: Request, res: Response) {
+        try {
+            // Force delete all users, handling foreign key constraints
+            await this.userRepository.query('DELETE FROM users CASCADE');
+            res.json({
+                success: true,
+                message: "All users deleted successfully"
+            });
+        } catch (error) {
+            console.error("Delete all users error:", error);
+            res.status(500).json({
+                success: false,
+                message: "Internal server error",
+                error: error.message
+            });
+        }
+    }
+
+    // Database management endpoint
+    async manageDatabaseTable(req: Request, res: Response) {
+        try {
+            const { action, table } = req.body;
+
+            switch (action) {
+                case 'drop_users_table':
+                    await this.userRepository.query('DROP TABLE IF EXISTS users CASCADE');
+                    return res.json({ success: true, message: "Users table dropped successfully" });
+
+                case 'reset_database':
+                    await this.userRepository.query('DELETE FROM rides CASCADE');
+                    await this.userRepository.query('DELETE FROM users CASCADE');
+                    return res.json({ success: true, message: "Database reset successfully" });
+
+                case 'show_users':
+                    const users = await this.userRepository.find();
+                    return res.json({ success: true, users });
+
+                default:
+                    return res.status(400).json({ success: false, message: "Unknown action" });
+            }
+        } catch (error) {
+            console.error("Database management error:", error);
+            res.status(500).json({
+                success: false,
+                message: "Internal server error",
+                error: error.message
             });
         }
     }

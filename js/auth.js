@@ -15,7 +15,6 @@ class AuthManager {
     async init() {
         await this.checkAuthStatus();
         this.setupEventListeners();
-        this.initializeValidation();
         console.log('🔐 HopOn Authentication System initialized');
     }
 
@@ -55,7 +54,7 @@ class AuthManager {
     async handleLogin(event) {
         event.preventDefault();
 
-        const loginId = document.getElementById('loginId').value.trim();
+        const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
 
         // Show loading state
@@ -63,14 +62,14 @@ class AuthManager {
         this.clearMessages();
 
         // Validate inputs
-        if (!this.validateLoginForm(loginId, password)) {
+        if (!this.validateLoginForm(email, password)) {
             this.showLoading(false);
             return;
         }
 
         try {
-            // Authenticate user via API
-            const result = await api.login({ loginId, password });
+            // Authenticate user via API using email
+            const result = await api.login({ email, password });
 
             if (result.success) {
                 this.showMessage('Login successful! Redirecting...', 'success');
@@ -96,9 +95,9 @@ class AuthManager {
 
         const formData = {
             name: document.getElementById('registerName').value.trim(),
-            loginId: document.getElementById('registerLoginId').value.trim(),
             email: document.getElementById('registerEmail').value.trim(),
             phone: document.getElementById('registerPhone').value.trim(),
+            gender: document.getElementById('registerGender').value,
             password: document.getElementById('registerPassword').value,
             confirmPassword: document.getElementById('confirmPassword').value
         };
@@ -118,9 +117,9 @@ class AuthManager {
             // Create user account via API
             const result = await api.register({
                 name: formData.name,
-                loginId: formData.loginId,
                 email: formData.email,
                 phone: formData.phone,
+                gender: formData.gender,
                 password: formData.password
             });
 
@@ -130,8 +129,8 @@ class AuthManager {
                 // Show login form after short delay
                 setTimeout(() => {
                     showLogin();
-                    // Pre-fill login ID
-                    document.getElementById('loginId').value = formData.loginId;
+                    // Pre-fill email
+                    document.getElementById('loginEmail').value = formData.email;
                 }, 1500);
             } else {
                 this.showMessage(result.message || 'Failed to create account', 'error');
@@ -145,18 +144,18 @@ class AuthManager {
     }
 
     // Validate login form
-    validateLoginForm(loginId, password) {
+    validateLoginForm(email, password) {
         let isValid = true;
 
         // Clear previous errors
         this.clearFieldErrors();
 
-        // Validate login ID
-        if (!loginId) {
-            this.showFieldError('loginId', 'Login ID is required');
+        // Validate email
+        if (!email) {
+            this.showFieldError('loginEmail', 'Email is required');
             isValid = false;
-        } else if (loginId.length < 3) {
-            this.showFieldError('loginId', 'Login ID must be at least 3 characters');
+        } else if (!this.isValidEmail(email)) {
+            this.showFieldError('loginEmail', 'Please enter a valid email address');
             isValid = false;
         }
 
@@ -186,27 +185,10 @@ class AuthManager {
             isValid = false;
         }
 
-        // Validate login ID
-        if (!data.loginId) {
-            this.showFieldError('registerLoginId', 'Login ID is required');
+        // Validate gender
+        if (!data.gender) {
+            this.showFieldError('registerGender', 'Please select your gender');
             isValid = false;
-        } else if (data.loginId.length < 3) {
-            this.showFieldError('registerLoginId', 'Login ID must be at least 3 characters');
-            isValid = false;
-        } else if (!/^[a-zA-Z0-9_]+$/.test(data.loginId)) {
-            this.showFieldError('registerLoginId', 'Login ID can only contain letters, numbers and underscore');
-            isValid = false;
-        } else {
-            // Check availability via API
-            try {
-                const response = await api.checkLoginIdAvailability(data.loginId);
-                if (!response.available) {
-                    this.showFieldError('registerLoginId', 'This Login ID is already taken');
-                    isValid = false;
-                }
-            } catch (error) {
-                console.error('Login ID check error:', error);
-            }
         }
 
         // Validate email
@@ -261,30 +243,6 @@ class AuthManager {
 
     // Setup real-time validation for better UX
     setupRealTimeValidation() {
-        // Login ID availability check for registration
-        const registerLoginId = document.getElementById('registerLoginId');
-        if (registerLoginId) {
-            let debounceTimer;
-            registerLoginId.addEventListener('input', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(async () => {
-                    const value = registerLoginId.value.trim();
-                    if (value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value)) {
-                        try {
-                            const response = await api.checkLoginIdAvailability(value);
-                            if (response.available) {
-                                this.showFieldSuccess('registerLoginId');
-                            } else {
-                                this.showFieldError('registerLoginId', 'This Login ID is already taken');
-                            }
-                        } catch (error) {
-                            console.error('Login ID check error:', error);
-                        }
-                    }
-                }, 500);
-            });
-        }
-
         // Email availability check
         const registerEmail = document.getElementById('registerEmail');
         if (registerEmail) {

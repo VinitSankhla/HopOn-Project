@@ -16,9 +16,9 @@ class StorageManager {
         }
     }
 
-    async authenticateUser(loginId, password) {
+    async authenticateUser(email, password) {
         try {
-            return await this.api.login({ loginId, password });
+            return await this.api.login({ email, password });
         } catch (error) {
             return { success: false, message: error.message };
         }
@@ -40,15 +40,6 @@ class StorageManager {
 
     logout() {
         this.api.logout();
-    }
-
-    async isLoginIdAvailable(loginId) {
-        try {
-            const response = await this.api.checkLoginIdAvailability(loginId);
-            return response.available;
-        } catch (error) {
-            return false;
-        }
     }
 
     async isEmailAvailable(email) {

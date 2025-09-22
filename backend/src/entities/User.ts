@@ -13,9 +13,6 @@ export class User {
   @PrimaryColumn()
   id!: string;
 
-  @Column({ unique: true })
-  loginId!: string;
-
   @Column()
   name!: string;
 
@@ -24,6 +21,9 @@ export class User {
 
   @Column()
   phone!: string;
+
+  @Column()
+  gender!: string;
 
   @Column()
   password!: string;
