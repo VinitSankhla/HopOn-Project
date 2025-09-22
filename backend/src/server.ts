@@ -4,7 +4,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { initializeDatabase } from "./config/database";
 import fs from "fs"
-import https from "https"
 
 // Import routes
 import authRoutes from "./routes/auth";
@@ -75,11 +74,10 @@ const startServer = async () => {
   try {
     await initializeDatabase();
 
-    const HTTPS_PORT = 443;
-    https.createServer(options, app).listen(HTTPS_PORT, '0.0.0.0', () => {
-      console.log(`🚀 HopOn Backend Server running on port ${HTTPS_PORT}`);
-      console.log(`📊 Health check: https://3.109.139.186/api/health`);
-      console.log(`🔗 API Base URL: https://3.109.139.186/api`);
+    app.listen(PORT, () => {
+      console.log(`🚀 HopOn Backend Server running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
     });
   } catch (error) {
